@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Author</key>
+	<string>Columbia University's Center for Teaching and Learning</string>
+	<key>Builder Version</key>
+	<string>11601.2.7.2</string>
+	<key>CFBundleDisplayName</key>
+	<string>Mediathread</string>
+	<key>CFBundleIdentifier</key>
+	<string>edu.columbia.mediathread</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>Chrome</key>
+	<dict>
+		<key>Toolbar Items</key>
+		<array>
+			<dict>
+				<key>Identifier</key>
+				<string>mediathread</string>
+				<key>Image</key>
+				<string>img/icon-128.png</string>
+				<key>Include By Default</key>
+				<true/>
+				<key>Label</key>
+				<string>Mediathread</string>
+				<key>Tool Tip</key>
+				<string>Collect w/ Mediathread</string>
+			</dict>
+		</array>
+	</dict>
+	<key>Description</key>
+	<string>Find assets to analyze in Mediathread</string>
+	<key>ExtensionInfoDictionaryVersion</key>
+	<string>1.0</string>
+	<key>Permissions</key>
+	<dict>
+		<key>Website Access</key>
+		<dict>
+			<key>Include Secure Pages</key>
+			<true/>
+			<key>Level</key>
+			<string>All</string>
+		</dict>
+	</dict>
+	<key>Website</key>
+	<string>https://github.com/ccnmtl/mediathread-safari</string>
+</dict>
+</plist>
