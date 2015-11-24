@@ -1,0 +1,270 @@
+.sherd-analyzer {
+    width: 100%;
+    position: absolute;
+    z-index: 999999999;
+    top: 0;
+    left: 0;
+    background-color: rgba(231, 231, 231, 0.8);
+}
+.sherd-analyzer button,
+.sherd-analyzer input[type="button"] {
+    cursor: pointer;
+}
+.sherd-window-inner h2{
+    color: #fff;
+    font-size: 14px;
+    font-weight: 200;
+    font-family : 'Helvetica Neue', Helvetica, Arial !important;
+    margin: 16px 0;
+}
+.sherd-window{
+    padding:0 25px 0 0;
+}
+.sherd-window-inner ul{
+    display: inline-block;
+    list-style: none;
+    margin: 70px 25px;
+}
+.sherd-window-inner ul li {
+    display: inline-block;
+    list-style: none;
+    margin: 7px;
+    overflow: hidden;
+    padding: 0px;
+}
+.sherd-asset-type{
+    float: left;
+    width: 100%;
+    text-align: left;
+    color: #333;
+}
+.sherd-asset-title{
+    float: left;
+    width: 100%;
+    text-align: left;
+    color: #333;
+}
+
+.sherd-asset-wrap {
+    min-height: 55px;
+    min-width: 215px;
+    text-align: center;
+    margin-bottom: 4px;
+/*
+    setting the min height and width will make sure that videos are
+    picked up and shown when they do not have thubmnails on their
+    hosted sites --> like the 9/11 archive.
+    height: 135px;  90% of the possible height of 150px */
+}
+.sherd-window-inner .sherd-form-title{
+    margin:0;
+    border:0;
+    padding:3px 0;
+    color: #333;
+}
+.sherd-form-title{
+    display: none;
+}
+.sherd-analyze-btn{
+    display:block;
+    padding:4px;
+    margin:4px;
+}
+.sherd-asset-title,
+.sherd-form-title, .sherd-analyze-btn{
+    display: none;
+}
+
+img.sherd-image {
+    max-width: 215px;
+    max-height: 300px;
+    border-radius: 4px;
+    margin: 0 auto;
+}
+
+.import-header{
+    position: absolute;
+    top:0;
+    left:200px;
+    width: 400px;
+}
+#import-header-wrap{
+    width: 100%;
+    position: absolute;
+    margin: 0;
+    top:0;
+    height: 55px;
+    background: url(/img/logo_mediathread_new.png) #383838 no-repeat;
+    background-position: center left;
+}
+
+input.analyze.btn-primary, input.cont.btn-primary{
+    display: block;
+    background-color: #333;
+    min-height: 25px;
+}
+
+.cont.btn-primary {
+    display: block;
+    background: transparent;
+    color: #fff;
+    font-size: 12px;
+    border-bottom: solid 1px #000;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+    border-radius: 0;
+    border-radius: 4px 4px 0 0;
+    box-shadow: none;
+    width: 100%;
+    clear: both;
+    font-family: 'Helvetica Neue', Helvetica, Arial;
+    font-weight: 200;
+    min-height: 25px;
+}
+
+.analyze.btn-primary {
+    display: block;
+    background: transparent;
+    color: #fff;
+    font-size: 12px;
+    border: none;
+    border-radius: 0 0 4px 4px;
+    box-shadow: inset 0 1px 1px #3d3d3d;
+    width: 100%;
+    clear: both;
+    font-family: 'Helvetica Neue', Helvetica, Arial;
+    font-weight: 200;
+}
+
+.cont.btn-primary:hover {
+    box-shadow: none;
+}
+
+.analyze.btn-primary:hover {
+    box-shadow: 3px 1px 1px #ccc;
+}
+
+input.cont {
+    position: relative;
+    margin: 0;
+    float: left;
+}
+
+input.analyze {
+    position: relative;
+    margin: 0;
+    float: left;
+    width: 135px;
+}
+
+
+.sherd-asset li form{
+    margin: 0 !important;
+}
+
+button.sherd-close{
+    position: absolute;
+    z-index: 999;
+    top: 20px;
+    right: 10px;
+    background: #555;
+    color: #fff !important;
+}
+button.sherd-close:hover{
+    background: #666;
+    color: #fff !important;
+}
+button.sherd-collection{
+    cursor: pointer;
+    position: absolute;
+    z-index: 999;
+    top: 20px;
+    right: 100px;
+    background: #555;
+    color: #fff !important;
+}
+button.sherd-collection:hover{
+    background: #666;
+    color: #fff !important;
+}
+.sherd-btn-overlay{
+    display: none;
+}
+div.alert-saved{
+    position:absolute;
+    z-index:99999999999999;
+    background:#C1E5FA;
+    width:535px;
+    border:3px solid #A9DFFF;
+    -webkit-border-radius:4px;
+    -moz-border-radius:4px;
+    border-radius:4px;
+    padding:25px;
+    color:#008ADB;
+    display:none;
+    line-height: 15px !important;
+}
+.alert-close{
+    cursor: pointer;
+    user-select: none;
+    position: absolute;
+    right: 0;
+    top: 0;
+    color: #999;
+    padding: 2px 5px;
+}
+/* No asset found message box*/
+.no-asset-alert{
+    width: 300px;
+    position: absolute;
+    z-index: 99999999999999999999999;
+    background: none repeat scroll 0% 0% rgb(193, 229, 250);
+    width: 535px;
+    border: 3px solid rgb(169, 223, 255);
+    border-radius: 4px 4px 4px 4px;
+    padding: 25px;
+    color: rgb(0, 138, 219);
+    text-align: left;
+}
+.no-asset-close-btn{
+    cursor: pointer;
+    -moz-user-select: none;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    color: rgb(153, 153, 153);
+    padding: 2px 5px;
+}
+
+/* Not logged in message */
+
+.message-div{
+    position: absolute;
+    background: none repeat scroll 0% 0% rgb(193, 229, 250);
+    width: 535px;
+    border: 3px solid rgb(169, 223, 255);
+    border-radius: 4px 4px 4px 4px;
+    padding: 25px;
+    color: rgb(0, 138, 219);
+}
+
+.message-div .message-close{
+    cursor: pointer;
+    -moz-user-select: none;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    color: rgb(153, 153, 153);
+    padding: 2px 5px;
+}
+
+h2.not-logged-in{
+    color: rgb(0, 138, 219);
+    font-weight: bold;
+    font-size: 18px;
+}
+
+a.not-logged-in{
+    color: rgb(0, 138, 219) !important;
+}

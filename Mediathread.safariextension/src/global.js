@@ -1,9 +1,12 @@
 var itemArray = safari.extension.toolbarItems;
 
-for (var i = 0; i < itemArray.length; ++i) {
-
-    var item = itemArray[i];
-
-    if (item.identifier == "mediathread") {
+var buttonClicked = function(event) {
+    if (event.command === 'mediathread') {
+        console.log('sending message', event);
+        // Send a "collect" message to the content script
+        safari.application.activeBrowserWindow.activeTab.page.dispatchMessage(
+            'mediathread-collect', null);
     }
-}
+};
+
+safari.application.addEventListener('command', buttonClicked, false);

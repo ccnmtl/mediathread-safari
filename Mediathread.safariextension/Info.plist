@@ -18,24 +18,53 @@
 	<string>1</string>
 	<key>Chrome</key>
 	<dict>
+		<key>Global Page</key>
+		<string>src/global.html</string>
 		<key>Toolbar Items</key>
 		<array>
 			<dict>
 				<key>Identifier</key>
 				<string>mediathread</string>
 				<key>Image</key>
-				<string>img/icon-128.png</string>
+				<string>img/icon.png</string>
 				<key>Include By Default</key>
 				<true/>
 				<key>Label</key>
 				<string>Mediathread</string>
+				<key>Palette Label</key>
+				<string>Mediathread</string>
 				<key>Tool Tip</key>
-				<string>Collect w/ Mediathread</string>
+				<string>Collect with Mediathread</string>
 			</dict>
+		</array>
+	</dict>
+	<key>Content</key>
+	<dict>
+		<key>Scripts</key>
+		<dict>
+			<key>End</key>
+			<array>
+				<string>injected/listener.js</string>
+			</array>
+			<key>Start</key>
+			<array>
+				<string>injected/lib/jquery-2.1.4.min.js</string>
+				<string>injected/lib/URI.js</string>
+				<string>injected/common/settings.js</string>
+				<string>injected/common/host-handler.js</string>
+				<string>injected/common/asset-handler.js</string>
+				<string>injected/common/collect.js</string>
+			</array>
+		</dict>
+		<key>Stylesheets</key>
+		<array>
+			<string>injected/css/sherd_styles.css</string>
 		</array>
 	</dict>
 	<key>Description</key>
 	<string>Find assets to analyze in Mediathread</string>
+	<key>DeveloperIdentifier</key>
+	<string>N4GV9R3SDD</string>
 	<key>ExtensionInfoDictionaryVersion</key>
 	<string>1.0</string>
 	<key>Permissions</key>
