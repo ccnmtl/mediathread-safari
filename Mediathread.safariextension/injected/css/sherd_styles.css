@@ -10,12 +10,12 @@
 .sherd-analyzer input[type="button"] {
     cursor: pointer;
 }
-.sherd-window-inner h2{
-    color: #fff;
-    font-size: 14px;
+.sherd-window-inner h2 {
+    color: #fff !important;
+    font-size: 14px !important;
     font-weight: 200;
     font-family : 'Helvetica Neue', Helvetica, Arial !important;
-    margin: 16px 0;
+    margin: 16px 0 !important;
 }
 .sherd-window{
     padding:0 25px 0 0;
