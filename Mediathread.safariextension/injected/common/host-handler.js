@@ -366,7 +366,7 @@ var hostHandler = {
                 baseUrl + '&method=flickr.photos.getInfo',
                 function(getInfoData) {
                     if (typeof getInfoData.photo === 'undefined' ||
-                        getInfoData.photo.media == 'video'
+                        getInfoData.photo.media === 'video'
                        ) {
                         /*video is unsupported*/
                         return callback([]);
@@ -642,7 +642,7 @@ var hostHandler = {
                                 'h' + img.height
                         }
                     };
-                    if (typeof document.evaluate == 'function') {
+                    if (typeof document.evaluate === 'function') {
                         // only do metadata if we can do XPath,
                         // otherwise, it's insane
                         var ancestor = $(this).parents()

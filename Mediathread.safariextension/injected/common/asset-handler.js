@@ -9,11 +9,11 @@ var assetHandler = {
                 */
                 match: function(eo) {
                     return (
-                        ('object' == eo.tagName.toLowerCase()) ?
-                            (eo.classid ==
+                        ('object' === eo.tagName.toLowerCase()) ?
+                            (eo.classid ===
                              'clsid:CFCDAA03-8BE4-11cf-B84B-0020AFBBCCFA' &&
                              'obj') || null :
-                            (String(eo.type) ==
+                            (String(eo.type) ===
                              'audio/x-pn-realaudio-plugin' && 'emb') ||
                             null);
                 },
@@ -38,7 +38,7 @@ var assetHandler = {
                         }
                     }
 
-                    if (typeof emb.DoPlay != 'undefined') {
+                    if (typeof emb.DoPlay !== 'undefined') {
                         rv.sources['realplayer-metadata'] = 'w' + (
                             emb.GetClipWidth() || emb.offsetWidth
                         ) + 'h' + (emb.GetClipHeight() || emb.offsetHeight);
@@ -173,7 +173,7 @@ var assetHandler = {
                     };
                     var c = obj.getConfig();
                     var pcfg = obj.getPluginConfig('http');
-                    if (item.type == 'rtmp') {
+                    if (item.type === 'rtmp') {
                         // ensure that mp4 rtmp files contain the
                         // needed mp4: prefix so that they will play
                         // properly in flowplayer;
@@ -271,7 +271,7 @@ var assetHandler = {
                                 sources.thumb = url;
                                 sources.poster = url;
                                 continue;
-                            } else if (!clip.type || clip.type == 'image') {
+                            } else if (!clip.type || clip.type === 'image') {
                                 if (/\.flv$/.test(url)) {
                                     clip = p;
                                     type = 'flv';
@@ -397,7 +397,7 @@ var assetHandler = {
                     // kaltura & vimeo use the same classid,
                     // apparently vimeo was built off kaltura?
                     return (
-                        (objemb.classid ==
+                        (objemb.classid ===
                          'clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' &&
                          movie.val().search('kaltura') > -1) ||
                             (String(objemb.type)
@@ -455,7 +455,7 @@ var assetHandler = {
             'quicktime': {
                 match: function(objemb) {
                     return (
-                        objemb.classid ==
+                        objemb.classid ===
                             'clsid:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B' ||
                             String(objemb.type).match(/quicktime/) !==
                             null ||
@@ -490,7 +490,7 @@ var assetHandler = {
                         'param[name=movie],param[name=MOVIE]');
 
                     return (
-                        (objemb.classid ==
+                        (objemb.classid ===
                          'clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' &&
                          movie.val().search('moogaloop') > -1) ||
                             (String(objemb.type)
@@ -637,7 +637,7 @@ var assetHandler = {
                                     dim.mode = 'y';
                                     return walktiles('y');
                                 case 'y':
-                                    if (dim.mode!='tilegrp') {
+                                    if (dim.mode !== 'tilegrp') {
                                         ++dim.tilegrp;
                                         dim.mode='y';
                                         return walktiles('tilegrp');
@@ -1044,7 +1044,7 @@ var assetHandler = {
             var unapi = $('abbr.unapi-id');
             // must find one, or it's not a page resource, and
             // we won't know what asset to connect to
-            if (unapi.length == 1) {
+            if (unapi.length === 1) {
                 var server = false;
                 $('link').each(function() {
                     if (this.rel === 'unapi-server') {
@@ -1080,7 +1080,7 @@ var assetHandler = {
                             $('title',pb).each(function() {
                                 var titleType = $(
                                     'titleType', this.parentNode).text();
-                                if (titleType == 'Element' ||
+                                if (titleType === 'Element' ||
                                     document.title.indexOf(
                                         this.firstChild.data) > -1
                                    ) {
@@ -1178,7 +1178,7 @@ var assetHandler = {
             var oembed_link = false;
             $('link').each(function() {
                 //jQuery 1.0 compatible
-                if (this.type == 'application/json+oembed') {
+                if (this.type === 'application/json+oembed') {
                     oembed_link = this;
                 }
             });

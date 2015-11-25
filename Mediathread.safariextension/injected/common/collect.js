@@ -151,7 +151,7 @@ window.MediathreadCollect = {
                 JSON.stringify(
                     obj,
                     function(key, value) {
-                        if (typeof value == 'object' && value.tagName) {
+                        if (typeof value === 'object' && value.tagName) {
                             return '';
                         } else {
                             return value;
@@ -206,12 +206,12 @@ window.MediathreadCollect = {
             var M = MediathreadCollect;
             function go(run_func) {
                 M.g = new M.Interface(host_url);
-                if (run_func == 'onclick') {
+                if (run_func === 'onclick') {
                     M.g.findAssets();
                 }
             }
             /*ffox 3.6+ and all other browsers:*/
-            if (document.readyState != 'complete') {
+            if (document.readyState !== 'complete') {
                 /*future, auto-embed use-case.
                   When we do this, we need to support ffox 3.5-
                 */
@@ -383,7 +383,7 @@ window.MediathreadCollect = {
                 }
             });
             for(var data in metaData) {
-                if (typeof metaData[data] == 'object') {
+                if (typeof metaData[data] === 'object') {
                     var flatMetaData = '';
                     for(var str in metaData[data]) {
                         if (flatMetaData === '') {
@@ -415,7 +415,7 @@ window.MediathreadCollect = {
     'find_by_attr': function (jq,tag,attr,val,par) {
         if (/^1.0/.test(jq.prototype.jquery)) {
             return jq(tag,par).filter(function(elt) {
-                return (elt.getAttribute && elt.getAttribute(attr) == val);
+                return (elt.getAttribute && elt.getAttribute(attr) === val);
             });
         } else {
             return jq(tag + '[' + attr + '=' + val + ']', par);
@@ -460,7 +460,7 @@ window.MediathreadCollect = {
         };
         var t = doc.createElement(tag);
         t.setAttribute('class',className);
-        if (typeof style == 'string') {
+        if (typeof style === 'string') {
             t.setAttribute('style', style);
             setStyle(t, style);
         } else for (var a in style) {
@@ -475,7 +475,7 @@ window.MediathreadCollect = {
         if (children) {
             for (var i = 0; i <children.length; i++) {
                 var c = children[i];
-                if (typeof c == 'string') {
+                if (typeof c === 'string') {
                     t.appendChild(doc.createTextNode(c));
                 } else {
                     t.appendChild(c);
@@ -597,7 +597,7 @@ window.MediathreadCollect = {
             var merge_with = false;
             if (
                 asset.page_resource &&
-                    asset != self.assets_found[0] &&
+                    asset !== self.assets_found[0] &&
                     self.assets_found.length-self.page_resource_count < 2
             ) {
                 // if there's only one asset on the page and rest are
@@ -1180,7 +1180,7 @@ window.MediathreadCollect = {
             }
             if (comp.ul) {
                 if (comp.ul.firstChild !== null &&
-                    comp.ul.firstChild.innerHTML == o.message_no_assets) {
+                    comp.ul.firstChild.innerHTML === o.message_no_assets) {
                     $(comp.ul.firstChild).remove();
                 }
                 comp.ul.appendChild(li);
