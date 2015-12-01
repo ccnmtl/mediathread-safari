@@ -1071,8 +1071,7 @@ var assetHandler = {
                                     'subject':[]
                                 }
                             };
-                            var pb = MediathreadCollect.xml2dom(
-                                pbcore_xml, xhr);
+                            var pb = MediathreadCollect.xml2dom(pbcore_xml);
                             if ($('PBCoreDescriptionDocument', pb)
                                 .length === 0) {
                                 return callback([]);

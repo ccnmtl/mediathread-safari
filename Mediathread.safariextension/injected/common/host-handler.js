@@ -748,9 +748,7 @@ var hostHandler = {
                     url: p.join('/') + '/gallery.xml',
                     dataType: 'text',
                     success: function(galleryXml, textStatus, xhr) {
-                        var gxml = MediathreadCollect.xml2dom(
-                            galleryXml,
-                            xhr);
+                        var gxml = MediathreadCollect.xml2dom(galleryXml);
                         var iPath = $(
                             'simpleviewerGallery', gxml)
                             .attr('imagePath');

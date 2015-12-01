@@ -138,11 +138,12 @@ window.MediathreadCollect = {
         'imagemat': function(obj, form, ready, doc) {
             var M = window.MediathreadCollect;
             if (obj.sources.title) {
-                var span = doc.createElement('span');
-                span.innerHTML = obj.sources.title;
-                span.className = 'sherdjs-source-title';
-                form.appendChild(span);
-                M.addField('ftitle',obj.sources.title,form,doc);
+                var $span = $('<span>', {
+                    'class': 'sherd-source-title'
+                });
+                $span.text(obj.sources.title);
+                $(form).append(span);
+                M.addField('ftitle', obj.sources.title, form, doc);
             }
             M.addField('htmls[0]',obj.sources.url,form,doc);
             M.addField('urls[0]',obj.sources[obj.primary_type],form,doc);
@@ -398,17 +399,17 @@ window.MediathreadCollect = {
             return metaData;
         }// end meta_data_elms !== undefined
     },
-    'xml2dom': function (str,xhr) {
+    'xml2dom': function (str) {
         if (window.DOMParser) {
             var p = new DOMParser();
-            return p.parseFromString(str,'text/xml');
+            return p.parseFromString(str, 'text/xml');
         } else if (window.ActiveXObject) {
-            var xmlDoc=new ActiveXObject('Microsoft.XMLDOM');
+            var xmlDoc = new ActiveXObject('Microsoft.XMLDOM');
             xmlDoc.loadXML(str);
             return xmlDoc;
         } else {
             var div = document.createElement('div');
-            div.innerHTML = str;
+            $(div).text(str);
             return div;
         }
     },
@@ -935,7 +936,7 @@ window.MediathreadCollect = {
 
                 asset.sources[asset.primary_type] = uri.href();
             }
-            if (!asset) {
+            if (!asset || assetUrl === 'http://undefined') {
                 return;
             }
             var doc = comp.ul.ownerDocument;
@@ -966,7 +967,7 @@ window.MediathreadCollect = {
                 $(form.firstChild).empty().append(newAsset);
             }
             if (asset.disabled) {
-                form.lastChild.innerHTML = o.message_disabled_asset;
+                $(form.lastChild).text(o.message_disabled_asset);
             } else if (MediathreadCollect.user_ready()) {
                 form.submitButton = self.elt(
                     null, 'input', 'analyze btn-primary',
@@ -1193,7 +1194,7 @@ window.MediathreadCollect = {
                 if (!results.found) {
                     $(comp.h2).text(o.message_no_assets_short);
                     $(comp.ul).html(self.elt(
-                        comp.ul.ownerDocument,'li','','',
+                        comp.ul.ownerDocument, 'li', '', '',
                         [o.message_no_assets]));
                 }
             }
@@ -1212,9 +1213,11 @@ window.MediathreadCollect = {
             var save_all = document.createElement('li');
             comp.ul.appendChild(save_all);
             ///TODO: cheating without possible dom weirdness
-            save_all.innerHTML =
-                '<button onclick="MediathreadCollect.g.saveAll()">Save All ' +
-                count + ' Items</button>';
+            var $button = ('<button>', {
+                onclick: 'MediathreadCollect.g.saveAll()'
+            });
+            $button.text('Save All ' + count + ' Items');
+            $(save_all).append($button);
             comp.saveAll = save_all;
             comp.saveAllButton = save_all.firstChild;
         };
@@ -1224,8 +1227,9 @@ window.MediathreadCollect = {
             if (!confirm('Are you sure?  This could take some time....')) {
                 return;
             }
-            comp.saveAllButton.disabled = true;
-            comp.saveAllButton.innerHTML = 'Saving...';
+            var $saveAllButton = $(comp.saveAllButton);
+            $saveAllButton.attr('disabled', true);
+            $saveAllButton.text('Saving...');
 
             var all_forms = $('form', comp.ul);
             var done = 0,
@@ -1271,7 +1275,7 @@ window.MediathreadCollect = {
                 var new_frm = target.createElement('form');
                 new_frm.action = this.action;
                 new_frm.method = 'POST';
-                new_frm.innerHTML = this.innerHTML;
+                $(new_frm).html($(this).html());
                 target.body.appendChild(new_frm);
 
                 var noui = target.createElement('input');
@@ -1289,8 +1293,8 @@ window.MediathreadCollect = {
 
                 $(iframe).load(function(evt) {
                     ++done;
-                    comp.saveAllButton.innerHTML = 'Saved ' + done + ' of ' +
-                        todo + '...';
+                    $(comp.saveAllButton).text(
+                        'Saved ' + done + ' of ' + todo + '...');
 
                     var frmid = String(this.id).slice(
                         0, -('-iframesubmit'.length));
