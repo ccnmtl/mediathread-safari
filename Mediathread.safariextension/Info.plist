@@ -58,7 +58,7 @@
 		</dict>
 		<key>Stylesheets</key>
 		<array>
-			<string>injected/css/sherd_styles.css</string>
+			<string>injected/css/mediathread_collect.css</string>
 		</array>
 	</dict>
 	<key>Description</key>
