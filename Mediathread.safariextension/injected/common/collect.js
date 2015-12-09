@@ -1042,7 +1042,7 @@ window.MediathreadCollect = {
                                 '<div class="alert-saved">' +
                                     '<span style="font-weight:bold">' +
                                     'Success.</span> Your item has been ' +
-                                    'sucessfully added to your ' +
+                                    'successfully added to your ' +
                                     '<a href="' + collectionUrl +
                                     '">Mediathread collection</a>.</div>');
                             var alertClose = $(
