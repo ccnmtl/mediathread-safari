@@ -87,21 +87,19 @@ window.MediathreadCollect = {
         M.forms[form_api](obj,form,ready,doc);
         return form;
     },/*obj2form*/
-    'addField': function(name,value,form,doc) {
+    'addField': function(name, value, form, doc) {
         var span = doc.createElement('span');
         var item = doc.createElement('input');
+        var $item = $(item);
         if (name === 'title') {
-            item.type = 'text';
-            //IE7 doesn't allow setAttribute here, mysteriously
-            item.className = 'sherd-form-title';
+            $item.attr('type', 'text');
+            $item.addClass('sherd-form-title');
         } else {
-            item.type = 'hidden';
+            $item.attr('type', 'hidden');
         }
-        item.name = name;
-        ///Ffox bug: this must go after item.type=hidden or not set correctly
-        item.value = value;
-        //form.appendChild(span);
-        form.appendChild(item);
+        $item.attr('name', name);
+        $(item).val(value);
+        $(form).append($item);
         return item;
     },/*addField*/
     'forms': {
@@ -884,9 +882,6 @@ window.MediathreadCollect = {
             M.connect(comp.close, 'click', function(evt) {
                 $('.sherd-analyzer').remove();
                 comp.window.style.display = 'none';
-                if (window.IEVideo) {
-                    $(window.IEVideo).css('display','block');
-                }
                 if (MediathreadCollect.options.decorate) {
                     comp.tab.style.display = 'block';
                 }
@@ -981,10 +976,7 @@ window.MediathreadCollect = {
                         type: 'button',
                         value: 'Collect'
                     });
-                if (!window.IEVideo) {
-                    //the continue button is not working in IE right now
-                    $(form).append(form.submitButton2);
-                }
+                $(form).append(form.submitButton2);
                 $(form).append(form.submitButton);
                 $(form.submitButton).click(function() {
                     var action = self.unHttpsTheLink(
