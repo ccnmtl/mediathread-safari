@@ -72,7 +72,7 @@
 }
 
 .sherd-form-title {
-    display: none !important;
+    display: none;
 }
 
 .sherd-analyze-btn {
@@ -83,7 +83,7 @@
 
 .sherd-asset-title,
 .sherd-form-title, .sherd-analyze-btn {
-    display: none !important;
+    display: none;
 }
 
 img.sherd-image {
@@ -205,7 +205,7 @@ button.sherd-collection:hover {
 }
 
 .sherd-btn-overlay {
-    display: none !important;
+    display: none;
 }
 
 div.alert-saved {
@@ -219,7 +219,7 @@ div.alert-saved {
     border-radius: 4px !important;
     padding: 25px !important;
     color: #008ADB !important;
-    display: none !important;
+    display: none;
     line-height: 15px !important;
 }
 
