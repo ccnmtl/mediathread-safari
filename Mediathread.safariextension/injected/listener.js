@@ -1,3 +1,5 @@
+/* jscs:disable requireCamelCaseOrUpperCaseIdentifiers */
+
 var startCollect = function() {
     $.ajax({
         url: MediathreadCollectOptions.user_url,
