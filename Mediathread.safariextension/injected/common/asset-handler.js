@@ -145,7 +145,7 @@ var assetHandler = {
                         'w' + c.width + 'h' + c.height;
                     if (item.image) {
                         rv.sources.thumb =
-                            MediathreadCollect.absolute_url(
+                            MediathreadCollect.absoluteUrl(
                                 item.image,
                                 context.document);
                     }
@@ -199,7 +199,7 @@ var assetHandler = {
                                      clip, time, refId) {
                     var sources = {};
                     var type = 'video';
-                    var abs = MediathreadCollect.absolute_url;
+                    var abs = MediathreadCollect.absoluteUrl;
                     if (cfg.playlist &&
                         (!clip.url || cfg.playlist.length > 1)
                        ) {
@@ -312,7 +312,7 @@ var assetHandler = {
                         .match(/FLVPlayer_Progressive\.swf/);
                 },
                 asset: function(emb,match,context) {
-                    var abs = MediathreadCollect.absolute_url;
+                    var abs = MediathreadCollect.absoluteUrl;
                     var flashvars = emb.getAttribute('flashvars');
                     if (flashvars) {
                         var stream = flashvars.match(/streamName=([^&]+)/);
@@ -406,7 +406,7 @@ var assetHandler = {
                     ) || null;
                 },
                 asset: function(objemb,match,context) {
-                    var abs = MediathreadCollect.absolute_url;
+                    var abs = MediathreadCollect.absoluteUrl;
                     var src = objemb.src || $(objemb).children(
                         'param[name=src],param[name=SRC]');
                     if (src.length) {
@@ -484,9 +484,9 @@ var assetHandler = {
                         }
                     }
 
-                    var vmCallback = function(vm_data) {
-                        if (vm_data && vm_data.length > 0) {
-                            var info = vm_data[0];
+                    var vmCallback = function(vmData) {
+                        if (vmData && vmData.length > 0) {
+                            var info = vmData[0];
                             rv.sources.title = info.title;
                             rv.sources.thumb = info.thumbnail_medium;
                             rv.sources['metadata-owner'] = info.user_name ||
@@ -519,20 +519,20 @@ var assetHandler = {
                 },
                 asset: function(objemb, match, context,
                                 index, optionalCallback) {
-                    var tile_root = MediathreadCollect.absolute_url(
+                    var tileRoot = MediathreadCollect.absoluteUrl(
                         match[1], context.document);
                     //chomp trailing /
-                    tile_root = tile_root.replace(/\/$/, '');
+                    tileRoot = tileRoot.replace(/\/$/, '');
                     var img = document.createElement('img');
-                    img.src = tile_root + '/TileGroup0/0-0-0.jpg';
-                    var rv_zoomify = {
+                    img.src = tileRoot + '/TileGroup0/0-0-0.jpg';
+                    var rvZoomify = {
                         'html': objemb,
                         'primary_type': 'image',
                         'label': 'Zoomify',
                         'sources': {
                             //better guess than 0-0-0.jpg
-                            'title': tile_root.split('/').pop(),
-                            'xyztile': tile_root +
+                            'title': tileRoot.split('/').pop(),
+                            'xyztile': tileRoot +
                                 '/TileGroup0/${z}-${x}-${y}.jpg',
                             'thumb': img.src,
                             'image': img.src, /*nothing bigger available*/
@@ -541,7 +541,7 @@ var assetHandler = {
                         },
                         wait: true
                     };
-                    var hard_way = function(error) {
+                    var hardWay = function(error) {
                         //security error?
                         //Let's try it the hard way!
                         var dim = {
@@ -585,14 +585,14 @@ var assetHandler = {
                                         return walktiles('tilegrp');
                                     } else {
                                         --dim.y;
-                                        rv_zoomify
+                                        rvZoomify
                                             .sources['xyztile-metadata'] =
-                                            ('w' + (dim.width*dim.x) +
-                                             'h' + (dim.height*dim.y));
-                                        rv_zoomify._data_collection =
+                                            ('w' + (dim.width * dim.x) +
+                                             'h' + (dim.height * dim.y));
+                                        rvZoomify._data_collection =
                                             'Hackish tile walk';
                                         return optionalCallback(
-                                            index, rv_zoomify);
+                                            index, rvZoomify);
                                     }
                                     break;
                                 case 'tilegrp': --dim.tilegrp;
@@ -601,7 +601,7 @@ var assetHandler = {
                                     return walktiles(m);
                                 }
                             };
-                            tile.src = tile_root + '/TileGroup' +
+                            tile.src = tileRoot + '/TileGroup' +
                                 dim.tilegrp + '/' + dim.z + '-' +
                                 dim.x + '-' + dim.y + '.jpg';
                         }
@@ -609,24 +609,24 @@ var assetHandler = {
                     };
                     try {
                         $.ajax({
-                            url: tile_root + '/ImageProperties.xml',
+                            url: tileRoot + '/ImageProperties.xml',
                             dataType: 'text',
                             success: function(dir) {
                                 var re = /WIDTH=\"(\d+)\"\s+HEIGHT=\"(\d+)\"/;
                                 var sizes = dir.match(re);
-                                rv_zoomify.sources['xyztile-metadata'] =
+                                rvZoomify.sources['xyztile-metadata'] =
                                     'w' + (sizes[1]) +
                                     'h' + (sizes[2]);
-                                rv_zoomify._data_collection =
+                                rvZoomify._data_collection =
                                     'ImageProperties.xml';
-                                optionalCallback(index, rv_zoomify);
+                                optionalCallback(index, rvZoomify);
                             },
-                            error: hard_way
+                            error: hardWay
                         });
                     } catch (ie_security_error) {
-                        hard_way();
+                        hardWay();
                     }
-                    return rv_zoomify;
+                    return rvZoomify;
                 }
             }
         },
@@ -634,8 +634,8 @@ var assetHandler = {
             var self = this;
             var result = [];
             var waiting = 0;
-            var finished = function(index, asset_result) {
-                result[index] = asset_result || result[index];
+            var finished = function(index, assetResult) {
+                result[index] = assetResult || result[index];
                 if (--waiting <= 0) {
                     callback(result);
                 }
@@ -646,8 +646,9 @@ var assetHandler = {
                     if (m !== null) {
                         var res = self.players[p].asset(
                             oe, m, context, result.length, finished);
-                        if (res.sources)
+                        if (res.sources) {
                             result.push(res);
+                        }
                         if (res.wait) {
                             ++waiting;
                         }
@@ -660,7 +661,7 @@ var assetHandler = {
             for (var i = 0; i < embs.length; i++) {
                 matchNsniff(embs[i]);
             }
-            for (i = 0; i <objs.length; i++) {
+            for (i = 0; i < objs.length; i++) {
                 matchNsniff(objs[i]);
             }
             if (waiting === 0) {
@@ -675,21 +676,21 @@ var assetHandler = {
             if (!source.src) {
                 return;
             }
-            var vid_type = 'video';
+            var vidType = 'video';
             var mtype = String(video.type).match(codecs);
             if (mtype) {
-                vid_type = mtype[1].toLowerCase();
+                vidType = mtype[1].toLowerCase();
                 if (video.canPlayType(video.type) === 'probably') {
-                    rv.primary_type = vid_type;
+                    rv.primary_type = vidType;
                 }
             } else if (mtype === String(source.src).match(codecs)) {
-                vid_type = mtype[1].toLowerCase().replace('ogv', 'ogg');
+                vidType = mtype[1].toLowerCase().replace('ogv', 'ogg');
             }
             if (rv.primary_type === 'video') {
-                rv.primary_type = vid_type;
+                rv.primary_type = vidType;
             }
-            rv.sources[vid_type] = source.src;
-            rv.sources[vid_type + '-metadata'] =
+            rv.sources[vidType] = source.src;
+            rv.sources[vidType + '-metadata'] =
                 'w' + video.videoWidth +
                 'h' + video.videoHeight;
         },
@@ -724,7 +725,7 @@ var assetHandler = {
     },
 
     audio: {
-        find: function(callback,context) {
+        find: function(callback, context) {
             // test if we are on the asset itself, relying on
             // the browser (support) handling the mp3 file
             if (/.mp3$/.test(document.location)) {
@@ -737,7 +738,7 @@ var assetHandler = {
                 }]);
             } else {//this must be a listing of audio files somewhere
                 // on the page.
-                window.MediathreadCollect.snd_asset_2_django = function(
+                window.MediathreadCollect.sndAsset2Django = function(
                     mp3, type
                 ) {
                     mp3.each(function(i) {
@@ -750,7 +751,8 @@ var assetHandler = {
                         }]);
                     });
                 };
-                var mp3, type;
+                var mp3;
+                var type;
                 if ($('*[href$="mp3"]').length) {// check for href
                     mp3 = $('*[href$="mp3"]');
                     type = 'href';
@@ -759,15 +761,17 @@ var assetHandler = {
                     type = 'src';
                 }//end else if
                 if (typeof mp3 !== 'undefined') {
-                    window.MediathreadCollect.snd_asset_2_django(mp3, type);
+                    window.MediathreadCollect.sndAsset2Django(mp3, type);
                 }//end if
             }//end else
         }//end find
     },
 
     'iframe.postMessage': {
-        find: function(callback,context) {
-            if (!window.postMessage) return callback([]);
+        find: function(callback, context) {
+            if (!window.postMessage) {
+                return callback([]);
+            }
             var frms = context.document.getElementsByTagName('iframe');
             var result = [];
             MediathreadCollect.connect(
@@ -775,12 +779,13 @@ var assetHandler = {
                 'message',
                 function(evt) {
                     try {
-                        var id, d = $.parseJSON(evt.data);
+                        var id;
+                        var d = $.parseJSON(evt.data);
                         if ((id = String(d.id).match(/^sherd(\d+)/)) &&
                             d.info
                            ) {
                             var i = d.info;
-                            switch(i.player) {
+                            switch (i.player) {
                             case 'flowplayer':
                                 var fp =
                                     (MediathreadCollect.assethandler
@@ -800,7 +805,7 @@ var assetHandler = {
                     } catch (e) {/*parse error*/}
                 });
 
-            for (var i = 0; i <frms.length; i++) {
+            for (var i = 0; i < frms.length; i++) {
                 try {
                     frms[i].contentWindow.postMessage(
                         '{"event":"info","id":"sherd' + i + '"}', '*');
@@ -837,10 +842,10 @@ var assetHandler = {
     },
 
     image: {
-        find: function(callback,context) {
+        find: function(callback, context) {
             var imgs = context.document.getElementsByTagName('img');
             var result = [];
-            var zoomify_urls = {};
+            var zoomifyUrls = {};
             var done = 0;
             for (var i = 0; i < imgs.length; i++) {
                 //IGNORE headers/footers/logos
@@ -864,16 +869,16 @@ var assetHandler = {
                     continue;
                 }
                 /*recreate the <img> so we get the real width/height */
-                var image_ind = document.createElement('img');
-                image_ind.src = image.src;
-                if (image_ind.width === 0) {
+                var imageInd = document.createElement('img');
+                imageInd.src = image.src;
+                if (imageInd.width === 0) {
                     //for if it doesn't load immediately
-                    //cheating: TODO - $(image_ind).bind('load',
+                    //cheating: TODO - $(imageInd).bind('load',
                     //    function() { /*see dropbox.com above*/ });
-                    image_ind = image;
+                    imageInd = image;
                 }
-                if (image_ind.width >= 400 ||
-                    image_ind.height >= 400
+                if (imageInd.width >= 400 ||
+                    imageInd.height >= 400
                    ) {
                     result.push({
                         'html': image,
@@ -881,31 +886,31 @@ var assetHandler = {
                         'sources': {
                             'title': image.title || undefined,
                             'image': image.src,
-                            'image-metadata': 'w' + image_ind.width +
-                                'h' + image_ind.height
+                            'image-metadata': 'w' + imageInd.width +
+                                'h' + imageInd.height
                         }
                     });
                 } else {
                     ////Zoomify Tile Images support
-                    var zoomify_match = String(image.src).match(
+                    var zoomifyMatch = String(image.src).match(
                             /^(.*)\/TileGroup\d\//);
-                    if (zoomify_match) {
-                        var tile_root = MediathreadCollect.absolute_url(
-                            zoomify_match[1],
+                    if (zoomifyMatch) {
+                        var tileRoot = MediathreadCollect.absoluteUrl(
+                            zoomifyMatch[1],
                             context.document);
-                        if (tile_root in zoomify_urls) {
+                        if (tileRoot in zoomifyUrls) {
                             continue;
                         } else {
-                            zoomify_urls[tile_root] = 1;
+                            zoomifyUrls[tileRoot] = 1;
                             var img = document.createElement('img');
-                            img.src = tile_root + '/TileGroup0/0-0-0.jpg';
+                            img.src = tileRoot + '/TileGroup0/0-0-0.jpg';
                             var zoomify = {
                                 'html': image,
                                 'primary_type': 'image',
                                 'sources': {
                                     //better guess than 0-0-0.jpg
-                                    'title': tile_root.split('/').pop(),
-                                    'xyztile': tile_root +
+                                    'title': tileRoot.split('/').pop(),
+                                    'xyztile': tileRoot +
                                         '/TileGroup0/${z}-${x}-${y}.jpg',
                                     'thumb': img.src,
                                     /*nothing bigger available*/
@@ -921,7 +926,7 @@ var assetHandler = {
                               img_key + '/ImageProperties.xml'
                             */
                             $.get(
-                                tile_root + '/ImageProperties.xml',
+                                tileRoot + '/ImageProperties.xml',
                                 null,
                                 /* jshint ignore:start */
                                 function(dir) {
@@ -966,10 +971,12 @@ var assetHandler = {
                         // use getAttribute rather than href,
                         // to avoid urlencodings
                         res0.sources[reg[1]] = this.getAttribute('href');
-                        if (/asset-primary/.test(this.className))
+                        if (/asset-primary/.test(this.className)) {
                             res0.primary_type = reg[1];
-                        if (this.title)
+                        }
+                        if (this.title) {
                             res0.sources.title = this.title;
+                        }
                     }
                 });
                 result.push(res0);
@@ -981,7 +988,7 @@ var assetHandler = {
     // http://unapi.info/specs/
     unAPI: {
         page_resource: true,
-        find: function(callback,context) {
+        find: function(callback, context) {
             var self = this;
             var unapi = $('abbr.unapi-id');
             // must find one, or it's not a page resource, and
@@ -996,24 +1003,24 @@ var assetHandler = {
                 if (server) {
                     ///start out only supporting pbcore
                     var format = '?format=pbcore';
-                    var request_url = server + format + '&id=' +
+                    var requestUrl = server + format + '&id=' +
                         unapi.attr('title');
                     $.ajax({
-                        'url': request_url,
+                        'url': requestUrl,
                         'dataType': 'text',
-                        success: function(pbcore_xml, textStatus, xhr) {
+                        success: function(pbcoreXml, textStatus, xhr) {
                             var rv = {
                                 'page_resource': true,
                                 'html': unapi.get(0),
                                 'primary_type': 'pbcore',
                                 'sources': {
-                                    'pbcore': request_url
+                                    'pbcore': requestUrl
                                 },
                                 'metadata': {
-                                    'subject':[]
+                                    'subject': []
                                 }
                             };
-                            var pb = MediathreadCollect.xml2dom(pbcore_xml);
+                            var pb = MediathreadCollect.xml2dom(pbcoreXml);
                             if ($('PBCoreDescriptionDocument', pb)
                                 .length === 0) {
                                 return callback([]);
@@ -1075,7 +1082,7 @@ var assetHandler = {
                                         'something went wrong with ' +
                                         'the unAPI call');
                                 // if Openvault
-                                if (request_url.indexOf('openvault') > 0) {
+                                if (requestUrl.indexOf('openvault') > 0) {
                                     rv = {
                                         'page_resource': true,
                                         'html': document,
@@ -1083,9 +1090,11 @@ var assetHandler = {
                                         'sources': {
                                             'pbcore': window.location.href
                                         },
-                                        'metadata': {'subject':[]}
+                                        'metadata': {
+                                            'subject': []
+                                        }
                                     };
-                                    rv.metadata.Description =[$(
+                                    rv.metadata.Description = [$(
                                         '.blacklight-dc_description_t ' +
                                             '.value').text()];
                                     rv.metadata.Subject =
@@ -1099,7 +1108,7 @@ var assetHandler = {
                             }
                             if (rv) {
                                 callback([rv]);
-                            }else{
+                            } else {
                                 callback([]);
                             }
                         }
@@ -1114,18 +1123,18 @@ var assetHandler = {
     // http://www.oembed.com/
     'oEmbed.json': {
         page_resource: true,
-        find: function(callback,context) {
+        find: function(callback, context) {
             var self = this;
-            var oembed_link = false;
+            var oembedLink = false;
             $('link').each(function() {
                 //jQuery 1.0 compatible
                 if (this.type === 'application/json+oembed') {
-                    oembed_link = this;
+                    oembedLink = this;
                 }
             });
-            if (oembed_link) {
+            if (oembedLink) {
                 var result = {
-                    'html': oembed_link,
+                    'html': oembedLink,
                     'sources': {},
                     'metadata': {},
                     'page_resource': true

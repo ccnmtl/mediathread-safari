@@ -300,7 +300,7 @@ window.MediathreadCollect = {
                 return item.properties;
             } else {
                 var props = {};
-                var abs = MediathreadCollect.absolute_url;
+                var abs = MediathreadCollect.absoluteUrl;
                 $('[itemprop]', item).each(function() {
                     var p = this.getAttribute('itemprop');
                     props[p] = props[p] || [];
@@ -346,7 +346,7 @@ window.MediathreadCollect = {
                             // if there's an <a> tag, then use the URL -- use
                             // for thumbs
                             $('a', tds[1]).slice(0, 1).each(function() {
-                                val = MediathreadCollect.absolute_url(
+                                val = MediathreadCollect.absoluteUrl(
                                     this.href, doc);
                             });
                             props[p].push(val);
@@ -420,7 +420,7 @@ window.MediathreadCollect = {
             return jq(tag + '[' + attr + '=' + val + ']', par);
         }
     },
-    'absolute_url': function (maybe_local_url, doc, maybe_suffix) {
+    'absoluteUrl': function (maybe_local_url, doc, maybe_suffix) {
         maybe_local_url = (maybe_suffix || '') + maybe_local_url;
         if (/:\/\//.test(maybe_local_url)) {
             return maybe_local_url;

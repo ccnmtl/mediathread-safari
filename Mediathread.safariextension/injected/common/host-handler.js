@@ -232,7 +232,7 @@ var hostHandler = {
             } catch (e) {
                 return callback([]);
             }
-            var abs = MediathreadCollect.absolute_url;
+            var abs = MediathreadCollect.absoluteUrl;
             for (var i = 0; i < optUrls.length; i++) {
                 var o = optUrls[i];
                 if (/Image/.test(o.text)) {
