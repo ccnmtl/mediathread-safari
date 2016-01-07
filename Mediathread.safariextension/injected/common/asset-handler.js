@@ -263,12 +263,12 @@ var assetHandler = {
                     } else {
                         sources[primaryType + '-metadata'] =
                             'w' + obj.offsetWidth +
-                            'h' + (obj.offsetHeight-25);
+                            'h' + (obj.offsetHeight - 25);
                     }
 
                     var metaObj = MediathreadCollect.flowclipMetaSearch(
                         document);
-                    for(var k in metaObj) {
+                    for (var k in metaObj) {
                         sources[k] = metaObj[k];
                     }
                     if (!sources.thumb) {
@@ -311,7 +311,7 @@ var assetHandler = {
                     return String(emb.src)
                         .match(/FLVPlayer_Progressive\.swf/);
                 },
-                asset: function(emb,match,context) {
+                asset: function(emb, match, context) {
                     var abs = MediathreadCollect.absoluteUrl;
                     var flashvars = emb.getAttribute('flashvars');
                     if (flashvars) {
@@ -365,13 +365,13 @@ var assetHandler = {
                         return {};
                     }
                     var rv = {
-                        html:objemb,
+                        html: objemb,
                         primary_type: 'kaltura',
                         label: 'kaltura video',
                         sources: {
                             'kaltura': stream
-                        }};
-
+                        }
+                    };
 
                     if (objemb.evaluate) {
                         var currentTime = objemb.evaluate(
@@ -405,14 +405,14 @@ var assetHandler = {
                             null
                     ) || null;
                 },
-                asset: function(objemb,match,context) {
+                asset: function(objemb, match, context) {
                     var abs = MediathreadCollect.absoluteUrl;
                     var src = objemb.src || $(objemb).children(
                         'param[name=src],param[name=SRC]');
                     if (src.length) {
                         src = (src.get) ? src.get(0).value : src;
                         return {
-                            'html':objemb,
+                            'html': objemb,
                             'primary_type': 'quicktime',
                             'sources': {
                                 'quicktime': abs(src, context.document),
@@ -553,7 +553,7 @@ var assetHandler = {
                         function walktiles(mode) {
                             var tile = document.createElement('img');
                             tile.onload = function() {
-                                switch(mode) {
+                                switch (mode) {
                                 case 'z': ++dim.z;
                                     dim.width = tile.width;
                                     dim.height = tile.height;
@@ -569,7 +569,7 @@ var assetHandler = {
                                 walktiles(mode);
                             };
                             tile.onerror = function() {
-                                switch(mode) {
+                                switch (mode) {
                                 case 'z':
                                     --dim.z;
                                     dim.mode = 'x';
@@ -581,7 +581,7 @@ var assetHandler = {
                                 case 'y':
                                     if (dim.mode !== 'tilegrp') {
                                         ++dim.tilegrp;
-                                        dim.mode='y';
+                                        dim.mode = 'y';
                                         return walktiles('tilegrp');
                                     } else {
                                         --dim.y;
@@ -631,7 +631,7 @@ var assetHandler = {
             }
         },
         find: function(callback, context) {
-            var self = this;
+            var me = this;
             var result = [];
             var waiting = 0;
             var finished = function(index, assetResult) {
@@ -641,10 +641,10 @@ var assetHandler = {
                 }
             };
             function matchNsniff(oe) {
-                for (var p in self.players) {
-                    var m = self.players[p].match(oe);
+                for (var p in me.players) {
+                    var m = me.players[p].match(oe);
                     if (m !== null) {
-                        var res = self.players[p].asset(
+                        var res = me.players[p].asset(
                             oe, m, context, result.length, finished);
                         if (res.sources) {
                             result.push(res);
@@ -989,7 +989,7 @@ var assetHandler = {
     unAPI: {
         page_resource: true,
         find: function(callback, context) {
-            var self = this;
+            var me = this;
             var unapi = $('abbr.unapi-id');
             // must find one, or it's not a page resource, and
             // we won't know what asset to connect to
@@ -1124,7 +1124,7 @@ var assetHandler = {
     'oEmbed.json': {
         page_resource: true,
         find: function(callback, context) {
-            var self = this;
+            var me = this;
             var oembedLink = false;
             $('link').each(function() {
                 //jQuery 1.0 compatible
@@ -1162,12 +1162,12 @@ var assetHandler = {
                                 break;
                             case 'video':
                                 result.primary_type = 'video';
-                                if (/\.pseudostreaming-/.test(json.html))
+                                if (/\.pseudostreaming-/.test(json.html)) {
                                     result.primary_type = 'video_pseudo';
-                                else if (/\rtmp/.test(json.html))
+                                } else if (/\rtmp/.test(json.html)) {
                                     result.primary_type = 'video_rtmp';
-                                result.sources[result.primary_type] =
-                                    json.url;
+                                }
+                                result.sources[result.primary_type] = json.url;
                                 break;
                             default:
                                 return callback([]);
