@@ -1,3 +1,173 @@
+var findByAttr = function(jq, tag, attr, val, par) {
+    return jq(tag + '[' + attr + '=' + val + ']', par);
+};
+
+var flowclipMetaSearch = function(doc) {
+    var metaData = {};
+    var metaDataElms = $('*[itemprop]', document);
+    if (typeof metaDataElms !== 'undefined') {
+        metaDataElms.each(function() {
+            var itemProp = $(this).attr('itemprop');
+            var val = $(this).text();
+            if ($(this).attr('itemref')) {
+                var metaId = $(this).attr('itemref');
+                if (typeof metaData['metadata-' + itemProp] ===
+                    'undefined') {
+                    metaData['metadata-' + itemProp] = {};
+                }
+                metaListItem = $('#' + metaId).text();
+                metaData['metadata-' + itemProp][metaId] = metaListItem;
+            }
+            if (itemProp === 'title') {
+                metaData[itemProp] = val;
+            } else if (
+                typeof metaData['metadata-' + itemProp] !== 'object'
+            ) {
+                metaData['metadata-' + itemProp] = val;
+            }
+        });
+        for (var data in metaData) {
+            if (typeof metaData[data] === 'object') {
+                var flatMetaData = '';
+                for (var str in metaData[data]) {
+                    if (flatMetaData === '') {
+                        flatMetaData = metaData[data][str];
+                    } else {
+                        flatMetaData += ', ' + metaData[data][str];
+                    }
+                }
+                metaData[data] = flatMetaData;
+            }// end if typeof metaData[data]
+        }
+        return metaData;
+    }// end meta_data_elms !== undefined
+};
+
+var microdataSearch = function(elem, doc) {
+    var item;
+    $(elem).parents('[itemscope]').each(function() {
+        item = this;
+    });
+    if (item) {
+        if (item.properties) {
+            return item.properties;
+        } else {
+            var props = {};
+            var abs = MediathreadCollect.absoluteUrl;
+            $('[itemprop]', item).each(function() {
+                var p = this.getAttribute('itemprop');
+                props[p] = props[p] || [];
+                switch (String(this.tagName).toLowerCase()) {
+                case 'a':
+                case 'link':
+                case 'area':
+                    props[p].push(abs(this.href, doc));
+                    break;
+                case 'audio':
+                case 'embed':
+                case 'iframe':
+                case 'img':
+                case 'source':
+                case 'video':
+                    if (this.src) {
+                        props[p].push(abs(this.src, doc));
+                    }
+                    break;
+                default:
+                    props[p].push($(this).text());
+                    break;
+                }
+            });
+            return props;
+        }
+    }
+};
+
+var metadataTableSearch = function(elem, doc) {
+    /*If asset is in a table and the next row has the word 'Metadata' */
+    if ('td' === elem.parentNode.tagName.toLowerCase()) {
+        var trs = $(elem.parentNode.parentNode).nextAll();
+        if (trs.length && /metadata/i.test($(trs[0]).text())) {
+            var props = {};
+            trs.each(function() {
+                var tds = $('td', this);
+                if (tds.length === 2) {
+                    var p = MediathreadCollect.clean($(tds[0]).text());
+                    if (p) {
+                        props[p] = props[p] || [];
+                        var val = MediathreadCollect.clean(
+                            $(tds[1]).text());
+                        // if there's an <a> tag, then use the URL -- use
+                        // for thumbs
+                        $('a', tds[1]).slice(0, 1).each(function() {
+                            val = MediathreadCollect.absoluteUrl(
+                                this.href, doc);
+                        });
+                        props[p].push(val);
+                    }
+                }
+            });
+            return props;
+        }
+    }
+};
+
+var mergeMetadata = function(result, metadata) {
+    if (!metadata) {
+        return;
+    }
+    if (!result.metadata) {
+        result.metadata = metadata;
+        return result.metadata;
+    } else {
+        for (var a in metadata) {
+            if (result.metadata[a]) {
+                result.metadata[a].push.apply(
+                    result.metadata[a], metadata[a]);
+            } else {
+                result.metadata[a] = metadata[a];
+            }
+        }
+    }
+    return metadata;
+};
+
+var metadataSearch = function(result, doc) {
+    /*
+      searches for neighboring metadata in microdata and some
+      ad-hoc microformats
+    */
+    var M = MediathreadCollect;
+    if (!mergeMetadata(result, metadataTableSearch(result.html, doc))) {
+        mergeMetadata(result, microdataSearch(result.html, doc));
+    }
+    var meta = result.metadata;
+    if (meta) {
+        //move appopriate keys to result.sources
+        var s = {
+            'title': meta.title || meta.title,
+            'thumb': meta.thumb || meta.Thumb || meta.Thumbnail ||
+                meta.thumbnail
+        };
+        for (var a in s) {
+            if (s[a]) {
+                result.sources[a] = s[a].shift();
+            }
+        }
+    }
+};
+
+var xml2dom = function(str) {
+    if (window.DOMParser) {
+        var p = new DOMParser();
+        return p.parseFromString(str, 'text/xml');
+    } else {
+        var div = document.createElement('div');
+        $(div).text(str);
+        return div;
+    }
+};
+
 var assetHandler = {
     objects_and_embeds: {
         players: {
@@ -163,7 +333,7 @@ var assetHandler = {
                         return String(obj.data)
                             .match(/flowplayer[\.\-\w]+3[.\d]+\.swf/);
                     } else {//IE7 ?+
-                        var movie = MediathreadCollect.find_by_attr(
+                        var movie = findByAttr(
                             $, 'param', 'name', 'movie', obj);
                         return (
                             (movie.length) ?
@@ -266,8 +436,7 @@ var assetHandler = {
                             'h' + (obj.offsetHeight - 25);
                     }
 
-                    var metaObj = MediathreadCollect.flowclipMetaSearch(
-                        document);
+                    var metaObj = flowclipMetaSearch(document);
                     for (var k in metaObj) {
                         sources[k] = metaObj[k];
                     }
@@ -717,8 +886,7 @@ var assetHandler = {
                 result.push(rv);
             }
             for (i = 0; i < result.length; i++) {
-                MediathreadCollect.metadataSearch(
-                    result[i], context.document);
+                metadataSearch(result[i], context.document);
             }
             callback(result);
         }
@@ -946,8 +1114,7 @@ var assetHandler = {
                 }
             }
             for (i = 0; i < result.length; i++) {
-                MediathreadCollect.metadataSearch(
-                    result[i], context.document);
+                metadataSearch(result[i], context.document);
             }
             if (done === 0) {
                 callback(result);
@@ -1020,7 +1187,7 @@ var assetHandler = {
                                     'subject': []
                                 }
                             };
-                            var pb = MediathreadCollect.xml2dom(pbcoreXml);
+                            var pb = xml2dom(pbcoreXml);
                             if ($('PBCoreDescriptionDocument', pb)
                                 .length === 0) {
                                 return callback([]);
