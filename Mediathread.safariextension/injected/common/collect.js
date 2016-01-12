@@ -1,5 +1,5 @@
 window.MediathreadCollect = {
-    /* updated by /accounts/logged_in.js */
+    /* updated by /accounts/is_logged_in/ */
     'user_status': {
         ready: false
     },
@@ -8,10 +8,10 @@ window.MediathreadCollect = {
         return true;
     },
     update_user_status: function(userStatus) {
-        var uninit = !window.MediathreadCollect.user_status.ready;
         for (var a in userStatus) {
             window.MediathreadCollect.user_status[a] = userStatus[a];
         }
+
         if (window.console) {
             window.console.log(userStatus);
         }
@@ -24,12 +24,6 @@ window.MediathreadCollect = {
         if ('flickr_apikey' in userStatus) {
             window.MediathreadCollect.options.flickr_apikey =
                 userStatus.flickr_apikey;
-        }
-
-        //Safari sometimes loads logged_in.js last, even when added first
-        if (uninit && userStatus.ready && MediathreadCollect.g) {
-            //find assets again
-            MediathreadCollect.g.findAssets();
         }
     },
     'hosthandler': hostHandler,
@@ -50,7 +44,12 @@ window.MediathreadCollect = {
         if (!obj.sources.url) {
             obj.sources.url = String(document.location);
         }
-        var destination =  host_url;
+
+        if (!/\/save\/$/.test(host_url)) {
+            host_url += '/save/';
+        }
+
+        var destination = host_url;
         for (var a in obj.sources) {
             if (typeof obj.sources[a] === 'undefined') {
                 continue;
@@ -73,7 +72,10 @@ window.MediathreadCollect = {
                 (index ? '#' + obj.sources[obj.primary_type]
                  .split('#')[0].split('/').pop() : '');
         }
-        var destination =  host_url;
+        if (!/\/save\/$/.test(host_url)) {
+            host_url += '/save/';
+        }
+        var destination = host_url;
         if (obj.hash) {
             destination += '#' + obj.hash;
         }
@@ -164,6 +166,9 @@ window.MediathreadCollect = {
     },
     'runners': {
         jump: function(host_url, jump_now) {
+            if (!/\/save\/$/.test(host_url)) {
+                host_url += '/save/';
+            }
             var final_url = host_url;
             var M = MediathreadCollect;
             var handler = M.gethosthandler();
@@ -204,6 +209,9 @@ window.MediathreadCollect = {
             handler.find.call(handler, jump_with_first_asset);
         },
         decorate: function(host_url) {
+            if (!/\/save\/$/.test(host_url)) {
+                host_url += '/save/';
+            }
             var M = MediathreadCollect;
             function go(run_func) {
                 M.g = new M.Interface(host_url);
@@ -239,188 +247,6 @@ window.MediathreadCollect = {
     },
     'clean': function(str) {
         return str.replace(/^\s+/,'').replace(/\s+$/,'').replace(/\s+/,' ');
-    },
-    'getImageDimensions': function(src, callback, onerror) {
-        var img = document.createElement('img');
-        img.onload = function() {
-            callback(img, 'w' + img.width + 'h' + img.height);
-        };
-        img.onerror = onerror;
-        img.src = src;
-        return img;
-    },
-    'mergeMetadata': function(result, metadata) {
-        if (!metadata) {
-            return;
-        }
-        if (!result.metadata) {
-            result.metadata = metadata;
-            return result.metadata;
-        } else {
-            for (var a in metadata) {
-                if (result.metadata[a]) {
-                    result.metadata[a].push.apply(
-                        result.metadata[a], metadata[a]);
-                } else {
-                    result.metadata[a] = metadata[a];
-                }
-            }
-        }
-        return metadata;
-    },
-    'metadataSearch': function(result, doc) {
-        /*
-          searches for neighboring metadata in microdata and some
-          ad-hoc microformats
-        */
-        var M = MediathreadCollect;
-        if (!M.mergeMetadata(result,M.metadataTableSearch(result.html, doc))) {
-            M.mergeMetadata(result,M.microdataSearch(result.html, doc));
-        }
-        var meta = result.metadata;
-        if (meta) {
-            //move appopriate keys to result.sources
-            var s = {
-                'title': meta.title || meta.title,
-                'thumb': meta.thumb || meta.Thumb || meta.Thumbnail ||
-                    meta.thumbnail
-            };
-            for (var a in s) {
-                if (s[a]) {
-                    result.sources[a] = s[a].shift();
-                }
-            }
-        }
-    },
-    'microdataSearch': function(elem, doc) {
-        var item;
-        $(elem).parents('[itemscope]').each(function() {
-            item = this;
-        });
-        if (item) {
-            if (item.properties) {
-                return item.properties;
-            } else {
-                var props = {};
-                var abs = MediathreadCollect.absoluteUrl;
-                $('[itemprop]', item).each(function() {
-                    var p = this.getAttribute('itemprop');
-                    props[p] = props[p] || [];
-                    switch (String(this.tagName).toLowerCase()) {
-                    case 'a':
-                    case 'link':
-                    case 'area':
-                        props[p].push(abs(this.href, doc));
-                        break;
-                    case 'audio':
-                    case 'embed':
-                    case 'iframe':
-                    case 'img':
-                    case 'source':
-                    case 'video':
-                        if (this.src) {
-                            props[p].push(abs(this.src, doc));
-                        }
-                        break;
-                    default:
-                        props[p].push($(this).text());
-                        break;
-                    }
-                });
-                return props;
-            }
-        }
-    },
-    'metadataTableSearch': function(elem, doc) {
-        /*If asset is in a table and the next row has the word 'Metadata' */
-        if ('td' === elem.parentNode.tagName.toLowerCase()) {
-            var trs = $(elem.parentNode.parentNode).nextAll();
-            if (trs.length && /metadata/i.test($(trs[0]).text())) {
-                var props = {};
-                trs.each(function() {
-                    var tds = $('td', this);
-                    if (tds.length === 2) {
-                        var p = MediathreadCollect.clean($(tds[0]).text());
-                        if (p) {
-                            props[p] = props[p] || [];
-                            var val = MediathreadCollect.clean(
-                                $(tds[1]).text());
-                            // if there's an <a> tag, then use the URL -- use
-                            // for thumbs
-                            $('a', tds[1]).slice(0, 1).each(function() {
-                                val = MediathreadCollect.absoluteUrl(
-                                    this.href, doc);
-                            });
-                            props[p].push(val);
-                        }
-                    }
-                });
-                return props;
-            }
-        }
-    },
-    'flowclipMetaSearch': function(doc) {
-        var metaData = {};
-        var metaDataElms = $('*[itemprop]', document);
-        if (typeof metaDataElms !== 'undefined') {
-            metaDataElms.each(function() {
-                var itemProp = $(this).attr('itemprop');
-                var val = $(this).text();
-                if ($(this).attr('itemref')) {
-                    var metaId = $(this).attr('itemref');
-                    if (typeof metaData['metadata-' + itemProp] ===
-                        'undefined') {
-                        metaData['metadata-' + itemProp] = {};
-                    }
-                    metaListItem = $('#' + metaId).text();
-                    metaData['metadata-' + itemProp][metaId] = metaListItem;
-                }
-                if (itemProp === 'title') {
-                    metaData[itemProp] = val;
-                } else if (
-                    typeof metaData['metadata-' + itemProp] !== 'object'
-                ) {
-                    metaData['metadata-' + itemProp] = val;
-                }
-            });
-            for (var data in metaData) {
-                if (typeof metaData[data] === 'object') {
-                    var flatMetaData = '';
-                    for (var str in metaData[data]) {
-                        if (flatMetaData === '') {
-                            flatMetaData = metaData[data][str];
-                        } else {
-                            flatMetaData += ', ' + metaData[data][str];
-                        }
-                    }
-                    metaData[data] = flatMetaData;
-                }// end if typeof metaData[data]
-            }
-            return metaData;
-        }// end meta_data_elms !== undefined
-    },
-    'xml2dom': function(str) {
-        if (window.DOMParser) {
-            var p = new DOMParser();
-            return p.parseFromString(str, 'text/xml');
-        } else if (window.ActiveXObject) {
-            var xmlDoc = new ActiveXObject('Microsoft.XMLDOM');
-            xmlDoc.loadXML(str);
-            return xmlDoc;
-        } else {
-            var div = document.createElement('div');
-            $(div).text(str);
-            return div;
-        }
-    },
-    'find_by_attr': function(jq, tag, attr, val, par) {
-        if (/^1.0/.test(jq.prototype.jquery)) {
-            return jq(tag,par).filter(function(elt) {
-                return (elt.getAttribute && elt.getAttribute(attr) === val);
-            });
-        } else {
-            return jq(tag + '[' + attr + '=' + val + ']', par);
-        }
     },
     'absoluteUrl': function(maybe_local_url, doc, maybe_suffix) {
         maybe_local_url = (maybe_suffix || '') + maybe_local_url;
@@ -719,6 +545,9 @@ window.MediathreadCollect = {
      END Finder
       *****************/
     'Interface': function(host_url, options) {
+        if (!/\/save\/$/.test(host_url)) {
+            host_url += '/save/';
+        }
         var M = MediathreadCollect;
         this.options = {
             login_url: null,
@@ -745,7 +574,7 @@ window.MediathreadCollect = {
                 this.options[a] = options[a];
             }
         }
-        //bring in options from MediathreadCollectOptions
+        //bring in options from MediathreadCollect.options
         for (var b in this.options) {
             if (M.options[b]) {
                 this.options[b] = M.options[b];
@@ -886,7 +715,7 @@ window.MediathreadCollect = {
 
             M.connect(comp.tab, 'click', this.onclick);
             M.connect(comp.collection, 'click', function(evt) {
-                var hostURL = MediathreadCollectOptions.host_url;
+                var hostURL = MediathreadCollect.options.host_url;
                 var url = me.unHttpsTheLink(hostURL.split(/\/save\//)[0]);
                 window.location.replace(url + '/asset/');
             });
@@ -964,7 +793,8 @@ window.MediathreadCollect = {
                 $(form.firstChild).empty().append(newAsset);
             } else {
                 asset.sources.thumb =
-                    host_url.split('save')[0] + 'media/img/nothumb_video.png';
+                    host_url.replace(/save\/$/, '') +
+                    'media/img/nothumb_video.png';
                 newAsset =
                     me.elt(null, 'img', 'sherd-video', {
                         src: asset.sources.thumb,
@@ -1128,25 +958,15 @@ window.MediathreadCollect = {
             // cross-domain.
         };
 
-    }, /*END Interface*/
-    getURLParameters: function(name) {
-        return decodeURIComponent((new RegExp(
-            '[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(
-                location.search) || [null, ''])[1].replace(/\+/g, '%20')) ||
-            null;
-    }
+    } /*END Interface*/
 };/*MediathreadCollect (root)*/
-
-if (!window.MediathreadCollectOptions) {
-    window.MediathreadCollectOptions = {};
-}
 
 ///1. search for assets--as soon as we find one, break out and send show: true
 ///2. on request, return a full asset list
 ///3. allow the grabber to be created by sending an asset list to it
-MediathreadCollect.options = MediathreadCollectOptions;
+MediathreadCollect.options = {};
 
-if (MediathreadCollectOptions.user_status) {
+if (MediathreadCollect.options.user_status) {
     MediathreadCollect.update_user_status(
-        MediathreadCollectOptions.user_status);
+        MediathreadCollect.options.user_status);
 }

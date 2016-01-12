@@ -1,3 +1,20 @@
+var getImageDimensions = function(src, callback, onerror) {
+    var img = document.createElement('img');
+    img.onload = function() {
+        callback(img, 'w' + img.width + 'h' + img.height);
+    };
+    img.onerror = onerror;
+    img.src = src;
+    return img;
+};
+
+var getURLParameters = function(name) {
+    return decodeURIComponent((new RegExp(
+        '[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(
+            location.search) || [null, ''])[1].replace(/\+/g, '%20')) ||
+        null;
+};
+
 var hostHandler = {
     'alexanderstreet.com': {
         find: function(callback) {
@@ -256,7 +273,7 @@ var hostHandler = {
                             document)
                     ];
                 });
-                MediathreadCollect.getImageDimensions(
+                getImageDimensions(
                     obj.sources.image,
                     function onload(img, dims) {
                         obj.sources['image-metadata'] = dims;
@@ -281,7 +298,7 @@ var hostHandler = {
                                         document.location.hostname + src;
                                 }
                                 obj.sources.image = src;
-                                MediathreadCollect.getImageDimensions(
+                                getImageDimensions(
                                     src,
                                     function onload(img, dims) {
                                         obj.sources['image-metadata'] =
@@ -658,9 +675,8 @@ var hostHandler = {
                     vMatch = document.location.search
                         .match(/[?&]v=([^&]*)/);
                 }
-                if (vMatch === null &&
-                    MediathreadCollect.getURLParameters('v')) {
-                    var vid = MediathreadCollect.getURLParameters('v');
+                if (vMatch === null && getURLParameters('v')) {
+                    var vid = getURLParameters('v');
                     vMatch = ['video_id=' + vid, vid];
                 }
 
