@@ -13,7 +13,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.0.2</string>
+	<string>0.0.3</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>Chrome</key>
@@ -50,7 +50,6 @@
 			<array>
 				<string>injected/lib/jquery-2.2.0.min.js</string>
 				<string>injected/lib/URI.js</string>
-				<string>injected/common/settings.js</string>
 				<string>injected/common/host-handler.js</string>
 				<string>injected/common/asset-handler.js</string>
 				<string>injected/common/collect.js</string>
