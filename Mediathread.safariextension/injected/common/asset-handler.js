@@ -1243,35 +1243,29 @@ var assetHandler = {
                         error: function() {
                             //attempt to scrape manually
                             var rv;
-                            if (console) {
-                                console.log(
-                                    'trying to scrape manually, ' +
-                                        'something went wrong with ' +
-                                        'the unAPI call');
-                                // if Openvault
-                                if (requestUrl.indexOf('openvault') > 0) {
-                                    rv = {
-                                        'page_resource': true,
-                                        'html': document,
-                                        'primary_type': 'pbcore',
-                                        'sources': {
-                                            'pbcore': window.location.href
-                                        },
-                                        'metadata': {
-                                            'subject': []
-                                        }
-                                    };
-                                    rv.metadata.Description = [$(
-                                        '.blacklight-dc_description_t ' +
-                                            '.value').text()];
-                                    rv.metadata.Subject =
-                                        [$('.blacklight-topic_cv .value')
-                                         .text()];
-                                    rv.metadata.Copyrights =
-                                        [$('.copyright').text()];
-                                    rv.metadata.Publisher =
-                                        ['WGBH Educational Foundation'];
-                                }
+                            // if Openvault
+                            if (requestUrl.indexOf('openvault') > 0) {
+                                rv = {
+                                    'page_resource': true,
+                                    'html': document,
+                                    'primary_type': 'pbcore',
+                                    'sources': {
+                                        'pbcore': window.location.href
+                                    },
+                                    'metadata': {
+                                        'subject': []
+                                    }
+                                };
+                                rv.metadata.Description = [$(
+                                    '.blacklight-dc_description_t ' +
+                                        '.value').text()];
+                                rv.metadata.Subject =
+                                    [$('.blacklight-topic_cv .value')
+                                     .text()];
+                                rv.metadata.Copyrights =
+                                    [$('.copyright').text()];
+                                rv.metadata.Publisher =
+                                    ['WGBH Educational Foundation'];
                             }
                             if (rv) {
                                 callback([rv]);

@@ -12,10 +12,6 @@ window.MediathreadCollect = {
             window.MediathreadCollect.user_status[a] = userStatus[a];
         }
 
-        if (window.console) {
-            window.console.log(userStatus);
-        }
-
         if ('youtube_apikey' in userStatus) {
             window.MediathreadCollect.options.youtube_apikey =
                 userStatus.youtube_apikey;
@@ -443,8 +439,6 @@ window.MediathreadCollect = {
                 if (merge_with.html_id) {
                     me.ASYNC.remove(merge_with);
                     delete merge_with.html_id;//so it doesn't over-write asset
-                } else if (window.console) {
-                    window.console.log('ERROR: No html_id on merge-item');
                 }
 
                 //jQuery 1.0compat (for drupal)
@@ -485,9 +479,6 @@ window.MediathreadCollect = {
                     after_merge.html_id = me.assetHtmlID(after_merge);
                     me.ASYNC.display(after_merge, /*index*/assets.length - 1);
                     window.MediathreadCollect.assetBucket = assets;
-                    if (window.console) {
-                        window.console.log(assets);
-                    }
                 }
             }
 
@@ -716,8 +707,8 @@ window.MediathreadCollect = {
             M.connect(comp.tab, 'click', this.onclick);
             M.connect(comp.collection, 'click', function(evt) {
                 var hostURL = MediathreadCollect.options.host_url;
-                var url = me.unHttpsTheLink(hostURL.split(/\/save\//)[0]);
-                window.location.replace(url + '/asset/');
+                hostURL.replace(/\/save\/$/, '');
+                window.location.replace(hostURL + '/asset/');
             });
             M.connect(comp.close, 'click', function(evt) {
                 $('.sherd-analyzer').remove();
@@ -755,10 +746,6 @@ window.MediathreadCollect = {
         };
         this.removeAsset = function(asset) {
             $('#' + asset.html_id).remove();
-        };
-        this.unHttpsTheLink = function(url) {
-            newUrl = 'http://' + url.split('://')[1];
-            return newUrl;
         };
         this.displayAsset = function(asset, index) {
             var assetUrl = asset.sources[asset.primary_type];
@@ -820,8 +807,7 @@ window.MediathreadCollect = {
                 $(form).append(form.submitButton2);
                 $(form).append(form.submitButton);
                 $(form.submitButton).click(function() {
-                    var action = me.unHttpsTheLink(
-                        $(this).parent().attr('action'));
+                    var action = $(this).parent().attr('action');
                     $(this).parent().attr('action', action);
                     $(this).parent().submit();
                 });
