@@ -644,11 +644,11 @@ var hostHandler = {
                 var $wrapper = $(videos[0]);
                 var $player = $wrapper.closest('.player');
                 var url = $player.data('fallback-url');
-                var vimeoId = $player.data('clip-id');
+                var vimeoId = $player.data('clip-id') || $player.attr('id');
 
                 MediathreadCollect.assethandler.objects_and_embeds
                     .players.moogaloop.asset(
-                        video,
+                        $('.video-wrapper video').first(),
                         vimeoId,
                         {
                             'window': window,

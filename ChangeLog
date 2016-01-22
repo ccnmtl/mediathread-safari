@@ -1,3 +1,7 @@
+2016-01-21  Nik Nyby  <nnyby@columbia.edu>
+
+	* Fix Vimeo asset collection bug.
+
 2015-12-14  Nik Nyby  <nnyby@columbia.edu>
 
 	* Fix host url messaging.
