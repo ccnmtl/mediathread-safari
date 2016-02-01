@@ -9,11 +9,11 @@
 	<key>CFBundleDisplayName</key>
 	<string>Mediathread</string>
 	<key>CFBundleIdentifier</key>
-	<string>edu.columbia.mediathread</string>
+	<string>edu.columbia.safari.mediathread</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.0.4</string>
+	<string>0.0.5</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>Chrome</key>
