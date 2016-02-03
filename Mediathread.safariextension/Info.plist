@@ -77,6 +77,8 @@
 			<string>All</string>
 		</dict>
 	</dict>
+	<key>Update Manifest URL</key>
+	<string>https://mediathread.ccnmtl.columbia.edu/media/safari_update_manifest.plist</string>
 	<key>Website</key>
 	<string>https://github.com/ccnmtl/mediathread-safari</string>
 </dict>
