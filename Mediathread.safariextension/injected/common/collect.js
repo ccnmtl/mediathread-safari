@@ -241,9 +241,6 @@ window.MediathreadCollect = {
     'hasBody': function(doc) {
         return (doc.body && 'body' === doc.body.tagName.toLowerCase());
     },
-    'clean': function(str) {
-        return str.replace(/^\s+/,'').replace(/\s+$/,'').replace(/\s+/,' ');
-    },
     'absoluteUrl': function(maybe_local_url, doc, maybe_suffix) {
         maybe_local_url = (maybe_suffix || '') + maybe_local_url;
         if (/:\/\//.test(maybe_local_url)) {
