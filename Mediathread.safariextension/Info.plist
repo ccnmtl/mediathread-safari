@@ -13,7 +13,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.0.6</string>
+	<string>0.0.7</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>Chrome</key>
@@ -26,7 +26,7 @@
 				<key>Identifier</key>
 				<string>mediathread</string>
 				<key>Image</key>
-				<string>Icon-64.png</string>
+				<string>Icon-256.png</string>
 				<key>Include By Default</key>
 				<true/>
 				<key>Label</key>
