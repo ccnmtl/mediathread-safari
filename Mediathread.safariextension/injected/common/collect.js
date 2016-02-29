@@ -26,7 +26,6 @@ window.MediathreadCollect = {
     'assethandler': assetHandler,
     'gethosthandler': function() {
         var hosthandler = MediathreadCollect.hosthandler;
-        hosthandler['mcah.columbia.edu'] = hosthandler['learn.columbia.edu'];
         for (var host in hosthandler) {
             if (new RegExp(host + '$').test(
                 location.hostname.replace('.ezproxy.cul.columbia.edu', '')
