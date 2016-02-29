@@ -252,9 +252,8 @@ var assetHandler = (function() {
                             optionalCallback(index);
                         }
                     });
-                    // YT is declaring maximum z-index for Safari and it
-                    // cannot be overriden via CSS
-                    // we need to redeclare it
+                    // Decrease the z-index of youtube's header so the
+                    // extension's header is visible.
                     $('#masthead-positioner').css('z-index', '999');
                     return rv;
                 }
