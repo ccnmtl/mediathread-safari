@@ -45,53 +45,52 @@ var collectPopupClickHandler = function(form, me, $buttonAsset, hostUrl) {
     $(bucketWrap).prepend(
         '<h2>Add this item to your Mediathread ' +
             'collection</h2>');
-    $('body',
-      bucketWindow.document).append(bucketWrap);
-    $('#submit-cancel',
-      bucketWindow.document).click(
-          function() {
-              bucketWindow.close();
-          });
-    $('#submit-input', bucketWindow.document)
-        .click(function() {
-            $(this).parent().submit();
-            var sherdOverlay = $('.sherd-window-inner', window.document);
-            var alertSavedMarginLeft =
-                ($('.sherd-window-inner', window.document)
-                 .width() / 2) - (535 * 0.5);
-            var alertSavedMarginTop =
-                ($(window).height() / 2) - 100;
-            var collectionUrl = hostUrl.replace(/\/save\/$/, '') + '/asset/';
-            var alertSaved = $(
-                '<div class="alert-saved">' +
-                    '<span style="font-weight:bold">' +
-                    'Success.</span> Your item has been ' +
-                    'successfully added to your ' +
-                    '<a href="' + collectionUrl +
-                    '">Mediathread collection</a>.</div>');
-            var alertClose = $(
-                '<div class="alert-close">X</div>');
 
-            alertSaved.css({
-                'top': alertSavedMarginTop + 'px',
-                'left': alertSavedMarginLeft + 'px'
+    $('body', bucketWindow.document).append(bucketWrap);
 
+    $('#submit-cancel', bucketWindow.document).click(
+        function() {
+            bucketWindow.close();
+        });
+
+    $('#submit-input', bucketWindow.document).click(function() {
+        $(this).closest('form').submit();
+        var sherdOverlay = $('.sherd-window-inner', window.document);
+        var alertSavedMarginLeft =
+            ($('.sherd-window-inner', window.document)
+             .width() / 2) - (535 * 0.5);
+        var alertSavedMarginTop =
+            ($(window).height() / 2) - 100;
+        var collectionUrl = hostUrl.replace(/\/save\/$/, '') + '/asset/';
+        var alertSaved = $(
+            '<div class="alert-saved">' +
+                '<span style="font-weight:bold">' +
+                'Success.</span> Your item has been ' +
+                'successfully added to your ' +
+                '<a href="' + collectionUrl +
+                '">Mediathread collection</a>.</div>');
+        var alertClose = $(
+            '<div class="alert-close">X</div>');
+
+        alertSaved.css({
+            'top': alertSavedMarginTop + 'px',
+            'left': alertSavedMarginLeft + 'px'
+        });
+        alertClose.click(function() {
+            $(this).parent().remove();
+        });
+        alertSaved.prepend(alertClose);
+        sherdOverlay.append(alertSaved);
+        alertSaved.fadeIn(500, function() {
+            var btn = $buttonAsset;
+            btn.attr('value', 'Collected');
+            btn.off();
+            btn.css({
+                background: '#999',
+                color: '#333'
             });
-            alertClose.click(function() {
-                $(this).parent().remove();
-            });
-            alertSaved.prepend(alertClose);
-            sherdOverlay.append(alertSaved);
-            alertSaved.fadeIn(500, function() {
-                var btn = $buttonAsset;
-                btn.attr('value', 'Collected');
-                btn.off();
-                btn.css({
-                    background: '#999',
-                    color: '#333'
-                });
-            });
-        });// end #submit-input' click
+        });
+    });// end #submit-input' click
 
     // style and add listeners onto the popup window
     //force the title of the popup
@@ -149,13 +148,6 @@ var collectPopupClickHandler = function(form, me, $buttonAsset, hostUrl) {
             '#0044cc #0044cc #002a80',
             'rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) ' +
                 'rgba(0, 0, 0, 0.25)'
-        ],
-        'filter': [
-            'progid:DXImageTransform.Microsoft.gradient(' +
-                'startColorstr="#ff0088cc", ' +
-                'endColorstr="#ff0044cc", GradientType=0)',
-            'progid:DXImageTransform.Microsoft.gradient(' +
-                'enabled=false)'
         ],
         'cursor': 'pointer',
         'display': 'inline-block'
