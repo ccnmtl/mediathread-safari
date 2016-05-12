@@ -189,18 +189,11 @@ button.sherd-close:hover {
     color: #fff !important;
 }
 
-button.sherd-collection {
-    cursor: pointer !important;
+a.sherd-collection {
     position: absolute !important;
     z-index: 999 !important;
     top: 20px !important;
     right: 100px !important;
-    background: #555 !important;
-    color: #fff !important;
-}
-
-button.sherd-collection:hover {
-    background: #666 !important;
     color: #fff !important;
 }
 
