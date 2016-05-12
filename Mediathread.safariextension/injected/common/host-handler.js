@@ -15,6 +15,10 @@ var getURLParameters = function(name) {
         null;
 };
 
+/**
+ * The active runner in the hostHandler object is decided via
+ * gethosthandler() in collect.js.
+ */
 var hostHandler = {
     'alexanderstreet.com': {
         find: function(callback) {
