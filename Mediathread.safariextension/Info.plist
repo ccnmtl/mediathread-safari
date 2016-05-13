@@ -48,7 +48,7 @@
 			</array>
 			<key>Start</key>
 			<array>
-				<string>injected/lib/jquery-2.2.0.min.js</string>
+				<string>injected/lib/jquery-2.2.3.min.js</string>
 				<string>injected/lib/URI.js</string>
 				<string>injected/common/host-handler.js</string>
 				<string>injected/common/asset-handler.js</string>
