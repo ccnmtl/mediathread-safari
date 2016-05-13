@@ -1,6 +1,6 @@
 var assetHandler = (function() {
     var clean = function(str) {
-        return str.replace(/^\s+/,'').replace(/\s+$/,'').replace(/\s+/,' ');
+        return str.replace(/^\s+/, '').replace(/\s+$/, '').replace(/\s+/, ' ');
     };
 
     var findByAttr = function(jq, tag, attr, val, par) {
@@ -63,24 +63,24 @@ var assetHandler = (function() {
                     var p = this.getAttribute('itemprop');
                     props[p] = props[p] || [];
                     switch (String(this.tagName).toLowerCase()) {
-                    case 'a':
-                    case 'link':
-                    case 'area':
-                        props[p].push(abs(this.href, doc));
-                        break;
-                    case 'audio':
-                    case 'embed':
-                    case 'iframe':
-                    case 'img':
-                    case 'source':
-                    case 'video':
-                        if (this.src) {
-                            props[p].push(abs(this.src, doc));
-                        }
-                        break;
-                    default:
-                        props[p].push($(this).text());
-                        break;
+                        case 'a':
+                        case 'link':
+                        case 'area':
+                            props[p].push(abs(this.href, doc));
+                            break;
+                        case 'audio':
+                        case 'embed':
+                        case 'iframe':
+                        case 'img':
+                        case 'source':
+                        case 'video':
+                            if (this.src) {
+                                props[p].push(abs(this.src, doc));
+                            }
+                            break;
+                        default:
+                            props[p].push($(this).text());
+                            break;
                     }
                 });
                 return props;
@@ -267,18 +267,18 @@ var assetHandler = (function() {
                     var item;
                     pl = obj.getPlaylist();
                     switch (pl.length) {
-                    case 0:
-                        return {};
-                    case 1:
-                        item = pl[0];
-                        break;
-                    default:
-                        //or should we just show all options?
-                        if (obj.jwGetPlaylistIndex) {
-                            item = pl[obj.jwGetPlaylistIndex()];
-                        } else {
+                        case 0:
                             return {};
-                        }
+                        case 1:
+                            item = pl[0];
+                            break;
+                        default:
+                            //or should we just show all options?
+                            if (obj.jwGetPlaylistIndex) {
+                                item = pl[obj.jwGetPlaylistIndex()];
+                            } else {
+                                return {};
+                            }
                     }
                     var rv = {
                         'html':
@@ -380,7 +380,7 @@ var assetHandler = (function() {
                             var p = cfg.playlist[i];
                             var url =  abs(
                                 ((typeof p === 'string') ? p : p.url),
-                                context.document,p.baseUrl);
+                                context.document, p.baseUrl);
                             if (/\.(jpg|jpeg|png|gif)/.test(url)) {
                                 //redundant urls wasteful, but useful
                                 sources.thumb = url;
@@ -726,51 +726,51 @@ var assetHandler = (function() {
                             var tile = document.createElement('img');
                             tile.onload = function() {
                                 switch (mode) {
-                                case 'z': ++dim.z;
-                                    dim.width = tile.width;
-                                    dim.height = tile.height;
-                                    break;
-                                case 'x': ++dim.x;
-                                    break;
-                                case 'y': ++dim.y;
-                                    break;
-                                case 'tilegrp':
-                                    ++dim.tilegrp;
-                                    break;
+                                    case 'z': ++dim.z;
+                                        dim.width = tile.width;
+                                        dim.height = tile.height;
+                                        break;
+                                    case 'x': ++dim.x;
+                                        break;
+                                    case 'y': ++dim.y;
+                                        break;
+                                    case 'tilegrp':
+                                        ++dim.tilegrp;
+                                        break;
                                 }
                                 walktiles(mode);
                             };
                             tile.onerror = function() {
                                 switch (mode) {
-                                case 'z':
-                                    --dim.z;
-                                    dim.mode = 'x';
-                                    return walktiles('x');
-                                case 'x':
-                                    --dim.x;
-                                    dim.mode = 'y';
-                                    return walktiles('y');
-                                case 'y':
-                                    if (dim.mode !== 'tilegrp') {
-                                        ++dim.tilegrp;
+                                    case 'z':
+                                        --dim.z;
+                                        dim.mode = 'x';
+                                        return walktiles('x');
+                                    case 'x':
+                                        --dim.x;
                                         dim.mode = 'y';
-                                        return walktiles('tilegrp');
-                                    } else {
-                                        --dim.y;
-                                        rvZoomify
-                                            .sources['xyztile-metadata'] =
-                                            ('w' + (dim.width * dim.x) +
-                                             'h' + (dim.height * dim.y));
-                                        rvZoomify._data_collection =
-                                            'Hackish tile walk';
-                                        return optionalCallback(
-                                            index, rvZoomify);
-                                    }
-                                    break;
-                                case 'tilegrp': --dim.tilegrp;
-                                    var m = dim.mode;
-                                    dim.mode = 'tilegrp';
-                                    return walktiles(m);
+                                        return walktiles('y');
+                                    case 'y':
+                                        if (dim.mode !== 'tilegrp') {
+                                            ++dim.tilegrp;
+                                            dim.mode = 'y';
+                                            return walktiles('tilegrp');
+                                        } else {
+                                            --dim.y;
+                                            rvZoomify
+                                                .sources['xyztile-metadata'] =
+                                                ('w' + (dim.width * dim.x) +
+                                                 'h' + (dim.height * dim.y));
+                                            rvZoomify._data_collection =
+                                                'Hackish tile walk';
+                                            return optionalCallback(
+                                                index, rvZoomify);
+                                        }
+                                        break;
+                                    case 'tilegrp': --dim.tilegrp;
+                                        var m = dim.mode;
+                                        dim.mode = 'tilegrp';
+                                        return walktiles(m);
                                 }
                             };
                             tile.src = tileRoot + '/TileGroup' +
@@ -957,20 +957,20 @@ var assetHandler = (function() {
                            ) {
                             var i = d.info;
                             switch (i.player) {
-                            case 'flowplayer':
-                                var fp =
-                                    (MediathreadCollect.assethandler
-                                     .objects_and_embeds.players
-                                     .flowplayer3.queryasset(
-                                         context,
-                                         frms[parseInt(id[1], 10)],
-                                         i.config,
-                                         i.clip,
-                                         i.time,
-                                         i.id));
-                                return callback([fp]);
-                            default:
-                                return callback([]);
+                                case 'flowplayer':
+                                    var fp =
+                                        (MediathreadCollect.assethandler
+                                         .objects_and_embeds.players
+                                         .flowplayer3.queryasset(
+                                             context,
+                                             frms[parseInt(id[1], 10)],
+                                             i.config,
+                                             i.clip,
+                                             i.time,
+                                             i.id));
+                                    return callback([fp]);
+                                default:
+                                    return callback([]);
                             }
                         }
                     } catch (e) {/*parse error*/}
@@ -1195,7 +1195,7 @@ var assetHandler = (function() {
                                 .length === 0) {
                                 return callback([]);
                             }
-                            $('title',pb).each(function() {
+                            $('title', pb).each(function() {
                                 var titleType = $(
                                     'titleType', this.parentNode).text();
                                 if (titleType === 'Element' ||
@@ -1312,29 +1312,30 @@ var assetHandler = (function() {
                         }
                         if (json.url) {
                             switch (json.type) {
-                            case 'photo':
-                            case 'image':
-                                result.primary_type = 'image';
-                                result.sources.image = json.url;
-                                ///extension: openlayers tiling protocol
-                                if (json.xyztile) {
-                                    var xyz = json.xyztile;
-                                    result.sources.xyztile = xyz.url;
-                                    result.sources['xyztile-metadata'] =
-                                        'w' + xyz.width + 'h' + xyz.height;
-                                }
-                                break;
-                            case 'video':
-                                result.primary_type = 'video';
-                                if (/\.pseudostreaming-/.test(json.html)) {
-                                    result.primary_type = 'video_pseudo';
-                                } else if (/\rtmp/.test(json.html)) {
-                                    result.primary_type = 'video_rtmp';
-                                }
-                                result.sources[result.primary_type] = json.url;
-                                break;
-                            default:
-                                return callback([]);
+                                case 'photo':
+                                case 'image':
+                                    result.primary_type = 'image';
+                                    result.sources.image = json.url;
+                                    ///extension: openlayers tiling protocol
+                                    if (json.xyztile) {
+                                        var xyz = json.xyztile;
+                                        result.sources.xyztile = xyz.url;
+                                        result.sources['xyztile-metadata'] =
+                                            'w' + xyz.width + 'h' + xyz.height;
+                                    }
+                                    break;
+                                case 'video':
+                                    result.primary_type = 'video';
+                                    if (/\.pseudostreaming-/.test(json.html)) {
+                                        result.primary_type = 'video_pseudo';
+                                    } else if (/\rtmp/.test(json.html)) {
+                                        result.primary_type = 'video_rtmp';
+                                    }
+                                    result.sources[result.primary_type] =
+                                        json.url;
+                                    break;
+                                default:
+                                    return callback([]);
                             }
                             result.sources[
                                 result.primary_type + '-metadata'] =

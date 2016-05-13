@@ -15,6 +15,10 @@ var getURLParameters = function(name) {
         null;
 };
 
+/**
+ * The active runner in the hostHandler object is decided via
+ * gethosthandler() in collect.js.
+ */
 var hostHandler = {
     'alexanderstreet.com': {
         find: function(callback) {
@@ -36,8 +40,8 @@ var hostHandler = {
                     function deplus(str, arr) {
                         if (str) {
                             return (arr) ?
-                                [str.replace(/\+/g,' ')] :
-                                str.replace(/\+/g,' ');
+                                [str.replace(/\+/g, ' ')] :
+                                str.replace(/\+/g, ' ');
                         }
                     }
                     if (json) {
@@ -84,13 +88,13 @@ var hostHandler = {
                                 },
                                 'metadata': {
                                     'Copyright': deplus(
-                                        v.copyright,1) ||
+                                        v.copyright, 1) ||
                                         undefined,
                                     'Publication Year': deplus(
                                         v.publicationyear, 1) ||
                                         undefined,
                                     'Publisher': deplus(
-                                        v.publisher,1) || undefined
+                                        v.publisher, 1) || undefined
                                 },
                                 '_jsondump': json
                             });
@@ -253,12 +257,12 @@ var hostHandler = {
             for (var i = 0; i < optUrls.length; i++) {
                 var o = optUrls[i];
                 if (/Image/.test(o.text)) {
-                    obj.sources.image = abs(o.value,document);
+                    obj.sources.image = abs(o.value, document);
                 } else if (/Transcription/.test(o.text)) {
                     obj.sources.transcript_url =
-                        abs(o.value,document);
+                        abs(o.value, document);
                     obj.metadata.Transcript =
-                        [abs(o.value,document)];
+                        [abs(o.value, document)];
                 }
             }
             if (obj.sources.image) {
@@ -268,8 +272,8 @@ var hostHandler = {
                 }).each(function() {
                     obj.metadata.Metadata = [
                         abs(String(this.href)
-                            .replace(/javascript:\w+\(\'/,'')
-                            .replace(/\'\)$/,''),
+                            .replace(/javascript:\w+\(\'/, '')
+                            .replace(/\'\)$/, ''),
                             document)
                     ];
                 });
