@@ -24,10 +24,10 @@ var collectPopupClickHandler = function(form, me, $buttonAsset, hostUrl) {
             'location=no,menubar=no,width=650,' +
             'height=350,top=200,left=300'
     );
-    if ($('.sherd-image',bucketWindow.document).length > 0) {
+    if ($('.sherd-image', bucketWindow.document).length > 0) {
         // make sure the bucket dies not already exists, if so
         // remove it.
-        $('#bucket-wrap',bucketWindow.document).remove();
+        $('#bucket-wrap', bucketWindow.document).remove();
     }
     bucket.appendTo(bucketWrap);
     $(bucket).append(
@@ -95,7 +95,7 @@ var collectPopupClickHandler = function(form, me, $buttonAsset, hostUrl) {
     // style and add listeners onto the popup window
     //force the title of the popup
     bucketWindow.document.title = 'Mediathread';
-    var body = $('body',bucketWindow.document);
+    var body = $('body', bucketWindow.document);
     var title = body.find('.sherd-form-title');
     var submitBtn = body.find('.btn-primary');
     var header = body.find('#bucket-wrap h2');
