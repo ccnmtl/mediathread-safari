@@ -11,6 +11,6 @@ Safari extension for importing assets to Mediathread
 * Go to the Safari extension submission page here:
   https://developer.apple.com/safari/extensions/submission/
   You'll need to fill out this form with each release:
-* Download URL: Link to Mediathread.safariext in the github release
+* Download URL: Link to `Mediathread.safariextz` in the github release
 * Category: Other
 * Extension Type: Toolbar Button
