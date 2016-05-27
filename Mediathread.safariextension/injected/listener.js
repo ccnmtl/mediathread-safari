@@ -53,4 +53,6 @@ var handleMessage = function(msgEvent) {
     }
 };
 
-safari.self.addEventListener('message', handleMessage, false);
+if (typeof safari !== 'undefined') {
+    safari.self.addEventListener('message', handleMessage, false);
+}
