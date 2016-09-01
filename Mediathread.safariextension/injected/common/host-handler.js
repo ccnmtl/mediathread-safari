@@ -184,7 +184,7 @@ var hostHandler = {
                     success: function(fpxdata, textStatus) {
                         var f = fpxdata[0];
                         obj.sources.fsiviewer =
-                            'http://viewer2.artstor.org/' +
+                            'https://viewer2.artstor.org/' +
                             'erez3/fsi4/fsi.swf';
                         obj.sources.image_fpxid = obj.artstorId;
                         obj.sources['image_fpxid-metadata'] =
@@ -209,7 +209,7 @@ var hostHandler = {
                                 /size\d\/(.*)\.\w+$/);
                         obj.sources.title = metadata.title;
                         obj.sources.thumb =
-                            'http://library.artstor.org' +
+                            'https://library.artstor.org' +
                             metadata.imageUrl;
                         var m = metadata.metaData;
                         for (var i = 0; i < m.length; i++) {
