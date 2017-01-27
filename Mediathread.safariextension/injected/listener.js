@@ -1,8 +1,10 @@
 /* jscs:disable requireCamelCaseOrUpperCaseIdentifiers */
 
-var hostUrl = 'https://mediathread.ccnmtl.columbia.edu/';
+var startCollect = function(hostUrl) {
+    if (typeof hostUrl === 'undefined' || !hostUrl) {
+        hostUrl = 'https://mediathread.ccnmtl.columbia.edu';
+    }
 
-var startCollect = function() {
     $.ajax({
         url: hostUrl + '/accounts/is_logged_in/',
         dataType: 'json',
@@ -45,11 +47,12 @@ var startCollect = function() {
  */
 var handleMessage = function(msgEvent) {
     var messageName = msgEvent.name;
+    var messageData = msgEvent.message;
     // msgEvent.message is the message data, but it's
     // not being used.
 
     if (messageName === 'mediathread-collect') {
-        startCollect();
+        startCollect(messageData);
     }
 };
 
