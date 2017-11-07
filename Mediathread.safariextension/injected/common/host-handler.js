@@ -1,3 +1,7 @@
+/* eslint-env jquery, node */
+/* global MediathreadCollect */
+/* exported getImageDimensions */
+
 var getImageDimensions = function(src, callback, onerror) {
     var img = document.createElement('img');
     img.onload = function() {
@@ -11,7 +15,7 @@ var getImageDimensions = function(src, callback, onerror) {
 var getURLParameters = function(name) {
     return decodeURIComponent((new RegExp(
         '[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(
-            location.search) || [null, ''])[1].replace(/\+/g, '%20')) ||
+        location.search) || [null, ''])[1].replace(/\+/g, '%20')) ||
         null;
 };
 
@@ -23,7 +27,7 @@ var hostHandler = {
     'alexanderstreet.com': {
         find: function(callback) {
             var token = document.documentElement.innerHTML.match(
-                    /token=([^&\"\']+)/);
+                /token=([^&"']+)/);
             if (!token) {
                 return callback([]);
             }
@@ -31,11 +35,11 @@ var hostHandler = {
                 url: 'http://' + location.hostname +
                     '/video/meta/' + token[1],
                 dataType: 'json',
-                dataFilter: function(data, type) {
+                dataFilter: function(data) {
                     ///removes 'json=' prefix and unescapes content
                     return unescape(String(data).substr(5));
                 },
-                success: function(json, textStatus) {
+                success: function(json) {
                     var rv = [];
                     function deplus(str, arr) {
                         if (str) {
@@ -47,7 +51,7 @@ var hostHandler = {
                     if (json) {
                         if (json.tracks && json.tracks.length > 0 &&
                             json.tracks[0].chunks.length > 0
-                           ) {
+                        ) {
                             var t = json.tracks[0];
                             // ASSUME: all chunks refer to same
                             // video file?
@@ -67,7 +71,7 @@ var hostHandler = {
                             for (var a in t.metadata) {
                                 if (t.metadata[a] &&
                                     !/id$/.test(a)
-                                   ) {
+                                ) {
                                     aspVid.metadata[a] = [
                                         deplus(t.metadata[a])];
                                 }
@@ -111,59 +115,32 @@ var hostHandler = {
 
     'artstor.org': {
         find: function(callback) {
-            /*must have floating pane open to find image*/
             var foundImages = [];
-            var floatingPane = $('.MetaDataWidgetRoot');
-            var selectedThumbs = $('.thumbNailImageSelected');
-            if (floatingPane.length > 0) {
-                var dom = floatingPane.get(0);
-                foundImages.push({
-                    'artstorId': dom.id.substr(3),/*after 'mdw'*/
-                    'sources': {},
-                    'metadata': {},
-                    'primary_type': 'image_fpx',
-                    'html': dom
-                });
-            } else if (selectedThumbs.length > 0) {
-                var contentScript = function() {
-                    var elId = 'dijitMap';
-                    var mapEl = document.getElementById(elId);
-                    if (mapEl) {
-                        // Remove this element if it exists.
-                        mapEl.parentNode.removeChild(mapEl);
-                    }
 
-                    // Make a 'map' between the dijit hash and the objectId's
-                    // we need. The map is a dom element with a bunch of data
-                    // attributes. That lets us access this data via the
-                    // Chrome extension. DOM is shared, but JS code isn't.
-                    mapEl = document.createElement('div');
-                    mapEl.id = elId;
-                    for (var key in dijit.registry._hash) {
-                        var obj = dijit.registry.byId(key);
-                        mapEl.setAttribute('data-' + key, obj.objectId);
-                    }
-                    document.body.appendChild(mapEl);
-                };
+            // asset detail page
+            var $elt = $('meta[name="asset.id"').first();
+            var content = $elt.attr('content');
 
-                // Run contentScript in the page context.
-                // http://stackoverflow.com/a/2303228/173630
-                var script = document.createElement('script');
-                script.appendChild(document.createTextNode(
-                    '(' + contentScript + ')();'));
-                (document.body ||
-                 document.head ||
-                 document.documentElement).appendChild(script);
-
+            // selected list page. check this first, as the asset.id
+            // content can contain invalid data
+            var selectedThumbs = $('.card.card--asset.selected');
+            if (selectedThumbs.length > 0) {
                 selectedThumbs.each(function() {
-                    var id = String(this.id).split('_')[0];
                     foundImages.push({
-                        'artstorId': $('#dijitMap').data(id),
+                        'artstorId': $(this).data('id'),
                         'sources': {},
                         'metadata': {},
                         'primary_type': 'image_fpx',
                         'html': this
                     });
+                });
+            } else if (content) {
+                foundImages.push({
+                    'artstorId': content,
+                    'sources': {},
+                    'metadata': {},
+                    'primary_type': 'image_fpx',
+                    'html': $elt
                 });
             } else {
                 return callback(
@@ -178,10 +155,10 @@ var hostHandler = {
             var getArtStorData = function(obj) {
                 $.ajax({
                     url: 'http://' + location.hostname +
-                        '/library/secure/imagefpx/' +
+                        '/api/secure/imagefpx/' +
                         obj.artstorId + '/103/5',
                     dataType: 'json',
-                    success: function(fpxdata, textStatus) {
+                    success: function(fpxdata) {
                         var f = fpxdata[0];
                         obj.sources.fsiviewer =
                             'https://viewer2.artstor.org/' +
@@ -201,12 +178,10 @@ var hostHandler = {
                 });
                 $.ajax({
                     url: 'http://' + location.hostname +
-                        '/library/secure/metadata/' +
+                        '/api/secure/metadata/' +
                         obj.artstorId,
                     dataType: 'json',
-                    success: function(metadata, textStatus) {
-                        var imgLink = metadata.imageUrl.match(
-                                /size\d\/(.*)\.\w+$/);
+                    success: function(metadata) {
                         obj.sources.title = metadata.title;
                         obj.sources.thumb =
                             'https://library.artstor.org' +
@@ -257,8 +232,7 @@ var hostHandler = {
                 MediathreadCollect.assethandler.
                     objects_and_embeds.players.youtube.asset(
                         videoDomObject,
-                        vMatch,
-                        {
+                        vMatch, {
                             'window': window,
                             'document': document
                         },
@@ -270,7 +244,7 @@ var hostHandler = {
                 callback([]);
             }
         },
-        decorate: function(objs) {
+        decorate: function() {
         }
     },
 
@@ -287,7 +261,7 @@ var hostHandler = {
 
             if (imageId.length < 1 ||
                 imageId.search(/\d{1,12}/) < 0
-               ) {
+            ) {
                 return callback([]);
             }
 
@@ -306,7 +280,7 @@ var hostHandler = {
                 function(getInfoData) {
                     if (typeof getInfoData.photo === 'undefined' ||
                         getInfoData.photo.media === 'video'
-                       ) {
+                    ) {
                         /*video is unsupported*/
                         return callback([]);
                     }
@@ -332,11 +306,8 @@ var hostHandler = {
                             );
                             var img;
                             $('img').each(function() {
-                                if (
-                                    RegExp(
-                                        'http://farm.*' + imageId)
-                                        .test(this.src)
-                                ) {
+                                if (RegExp('http://farm.*' + imageId)
+                                    .test(this.src)) {
                                     img = this;
                                 }
                             });
@@ -368,7 +339,7 @@ var hostHandler = {
                         });
                 });/*end $.ajax*/
         },
-        decorate: function(objs) {
+        decorate: function() {
         }
     },
 
@@ -398,8 +369,7 @@ var hostHandler = {
                         objects_and_embeds.players.
                         flowplayer3.asset(
                             video,
-                            vMatch,
-                            {
+                            vMatch, {
                                 'window': window,
                                 'document': document
                             });
@@ -459,7 +429,7 @@ var hostHandler = {
                 for (i = tags.length - 1; i >= 0; i--) {
                     if (tags[i].trim() === '<br>' ||
                         tags[i].trim() === ''
-                       ) {
+                    ) {
                         tags.splice(i, 1);
                     } else {
                         tags[i] = tags[i].trim();
@@ -476,7 +446,7 @@ var hostHandler = {
                 for (i = credits.length - 1; i >= 0; i--) {
                     if (credits[i].trim() === '<br>' ||
                         credits[i].trim() === ''
-                       ) {
+                    ) {
                         credits.splice(i, 1);
                     } else {
                         credits[i] = credits[i].trim();
@@ -492,7 +462,7 @@ var hostHandler = {
 
             return callback([fpRv]);
         },
-        decorate: function(objs) {
+        decorate: function() {
         }
     },
 
@@ -505,7 +475,7 @@ var hostHandler = {
                 var source = $(this).attr('src');
                 if (source.split('//').length < 3 &&
                     !patt.test(source)
-                   ) {
+                ) {
                     source = 'https://' + source.split('//')[1];
                     source = source.split('=')[0];
                     obj.html = this;
@@ -533,7 +503,7 @@ var hostHandler = {
                 var source = $(this).attr('src');
                 if (source.split('//').length < 3 &&
                     !patt.test(source)
-                   ) {
+                ) {
                     source = 'http://' + source.split('//')[1];
                     source = source.split('=')[0];
                     obj.html = this;
@@ -565,14 +535,12 @@ var hostHandler = {
                 // parse vimeo id out of the fallback url
                 var $wrapper = $(videos[0]);
                 var $player = $wrapper.closest('.player');
-                var url = $player.data('fallback-url');
                 var vimeoId = $player.data('clip-id') || $player.attr('id');
 
                 MediathreadCollect.assethandler.objects_and_embeds
                     .players.moogaloop.asset(
                         $('.video-wrapper video').first(),
-                        vimeoId,
-                        {
+                        vimeoId, {
                             'window': window,
                             'document': document
                         },
@@ -582,7 +550,7 @@ var hostHandler = {
                         });
             }
         },
-        decorate: function(objs) {
+        decorate: function() {
         }
     },
 
@@ -605,8 +573,7 @@ var hostHandler = {
                 MediathreadCollect.assethandler.objects_and_embeds
                     .players.youtube.asset(
                         video,
-                        vMatch,
-                        {
+                        vMatch, {
                             'window': window,
                             'document': document
                         },
@@ -623,8 +590,7 @@ var hostHandler = {
                 MediathreadCollect.assethandler.objects_and_embeds
                     .players.youtube.asset(
                         video,
-                        fauxMatch,
-                        {
+                        fauxMatch, {
                             'window': window,
                             'document': document
                         },
@@ -636,11 +602,14 @@ var hostHandler = {
                 callback([]);
             }
         },
-        decorate: function(objs) {
+        decorate: function() {
         }
     }
 };
 
 if (typeof module !== 'undefined') {
-    module.exports = hostHandler;
+    module.exports = {
+        hostHandler: hostHandler,
+        getImageDimensions: getImageDimensions
+    };
 }
