@@ -154,7 +154,7 @@ var hostHandler = {
             };
             var getArtStorData = function(obj) {
                 $.ajax({
-                    url: 'http://' + location.hostname +
+                    url: 'https://' + location.hostname +
                         '/api/secure/imagefpx/' +
                         obj.artstorId + '/103/5',
                     dataType: 'json',
@@ -177,7 +177,7 @@ var hostHandler = {
                     }
                 });
                 $.ajax({
-                    url: 'http://' + location.hostname +
+                    url: 'https://' + location.hostname +
                         '/api/secure/metadata/' +
                         obj.artstorId,
                     dataType: 'json',

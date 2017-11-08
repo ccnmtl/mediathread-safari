@@ -1,3 +1,7 @@
+/* eslint-env jquery */
+/* global hostHandler, assetHandler */
+/* global MediathreadCollect, collectPopupClickHandler, URI */
+
 window.MediathreadCollect = {
     /* updated by /accounts/is_logged_in/ */
     'user_status': {
@@ -37,28 +41,6 @@ window.MediathreadCollect = {
 
         return null;
     },/*gethosthandler*/
-    'obj2url': function(host_url, obj) {
-        /*excluding metadata because too short for GET string*/
-        if (!obj.sources.url) {
-            obj.sources.url = String(document.location);
-        }
-
-        if (!/\/save\/$/.test(host_url)) {
-            host_url += '/save/';
-        }
-
-        var destination = host_url;
-        for (var a in obj.sources) {
-            if (typeof obj.sources[a] === 'undefined') {
-                continue;
-            }
-            destination += (a + '=' + escape(obj.sources[a]) + '&');
-        }
-        if (obj.hash) {
-            destination += '#' + obj.hash;
-        }
-        return destination;
-    },/*obj2url*/
     'obj2form': function(host_url, obj, doc, target, index) {
         var M = window.MediathreadCollect;
         doc = doc || document;
@@ -68,7 +50,7 @@ window.MediathreadCollect = {
         if (!obj.sources.url) {
             obj.sources.url = String(doc.location) +
                 (index ? '#' + obj.sources[obj.primary_type]
-                 .split('#')[0].split('/').pop() : '');
+                    .split('#')[0].split('/').pop() : '');
         }
         if (!/\/save\/$/.test(host_url)) {
             host_url += '/save/';
@@ -90,7 +72,6 @@ window.MediathreadCollect = {
         return form;
     },/*obj2form*/
     'addField': function(name, value, form, doc) {
-        var span = doc.createElement('span');
         var item = doc.createElement('input');
         var $item = $(item);
         if (name === 'title') {
@@ -129,7 +110,7 @@ window.MediathreadCollect = {
                 for (a in obj.metadata) {
                     for (var i = 0; i < obj.metadata[a].length; i++) {
                         M.addField('metadata-' + a, obj.metadata[a][i],
-                                   form, doc);
+                            form, doc);
                     }
                 }
             }
@@ -142,7 +123,7 @@ window.MediathreadCollect = {
                     'class': 'sherd-source-title'
                 });
                 $span.text(obj.sources.title);
-                $(form).append(span);
+                $(form).append($span);
                 M.addField('ftitle', obj.sources.title, form, doc);
             }
             M.addField('htmls[0]', obj.sources.url, form, doc);
@@ -190,11 +171,10 @@ window.MediathreadCollect = {
         }
     },
     'runners': {
-        jump: function(host_url, jump_now) {
+        jump: function(host_url) {
             if (!/\/save\/$/.test(host_url)) {
                 host_url += '/save/';
             }
-            var final_url = host_url;
             var M = MediathreadCollect;
             var handler = M.gethosthandler();
             var grabber_func = function() {
@@ -349,10 +329,10 @@ window.MediathreadCollect = {
         this.asset_keys = {};
 
         this.ASYNC = {
-            remove: function(asset) {},
-            display: function(asset, index) {},
+            remove: function() {},
+            display: function() {},
             finish: function() {},
-            best_frame: function(frame) {}
+            best_frame: function() {}
         };
 
         this.bestFrame = function() {
@@ -372,7 +352,7 @@ window.MediathreadCollect = {
             }
             if (me.assets_found.length === 0 &&
                 MediathreadCollect.user_ready()
-               ) {
+            ) {
                 MediathreadCollect.showNoAssetMessage();
             }
         };
@@ -396,9 +376,10 @@ window.MediathreadCollect = {
                 for (h in MediathreadCollect.assethandler) {
                     var handler = handlers[h];
                     try {
-                        handler.find.call(handler,
-                                          me.collectAssets,
-                                          context);
+                        handler.find.call(
+                            handler,
+                            me.collectAssets,
+                            context);
                     } catch (e) {
                         ++me.handler_count;
                         MediathreadCollect.error = e;
@@ -465,7 +446,7 @@ window.MediathreadCollect = {
                 throw Error('asset does not have a primary type.');
             }
         };
-        this.collectAssets = function(assets, errors) {
+        this.collectAssets = function(assets) {
             me.assets_found = me.assets_found.concat(assets);
             for (var i = 0; i < assets.length; i++) {
                 me.no_assets_yet = false;
@@ -505,7 +486,7 @@ window.MediathreadCollect = {
                     document.body.offsetWidth * document.body.offsetHeight :
                     0);
             rv.best = ((max) ? rv.all[0] : null);
-            function _walk(index, domElement) {
+            function _walk() {
                 try {
                     var doc = this.contentDocument ||
                         this.contentWindow.document;
@@ -572,11 +553,11 @@ var Interface = function(host_url, options) {
     }
 };
 
-Interface.prototype.onclick = function(evt) {
-    if (me.windowStatus) {
+Interface.prototype.onclick = function() {
+    if (this.windowStatus) {
         return;
     }
-    me.findAssets();
+    this.findAssets();
 };
 
 Interface.prototype.visibleY = function(target) {
@@ -595,10 +576,12 @@ Interface.prototype.showWindow = function() {
             $(this.components.h2).empty().get(0)
                 .appendChild(document.createTextNode('Login required'));
             this.options.login_url = this.options.login_url ||
-                host_url.split('/', 3).join('/');
+                this.host_url.split('/', 3).join('/');
             $(this.components.message).empty().append(
-                this.elt(null, 'span', '', {},
-                       [this.options.not_logged_in_message,
+                this.elt(
+                    null, 'span', '', {},
+                    [
+                        this.options.not_logged_in_message,
                         this.elt(null, 'br', '', {}),
                         'Please ',
                         this.elt(null, 'a', '', {
@@ -607,8 +590,8 @@ Interface.prototype.showWindow = function() {
                             style: 'color:#8C3B2E;'
                         }, [this.options.login_to_course_message]),
                         ', and then click the ' + this.options.widget_name +
-                        ' again to import items.'
-                       ]));
+                            ' again to import items.'
+                    ]));
             $('.sherd-asset').css({
                 display: 'none'
             });
@@ -663,7 +646,6 @@ Interface.prototype.setupContent = function(target) {
         this.components.top.setAttribute('class', 'sherd-analyzer');
         target.appendChild(this.components.top);
     }
-    var pageYOffset = this.visibleY(target) + this.options.top;
     var pageLength = $(document).height();
     $(this.components.top).css('height', pageLength);
     // if page is long make sure the user is placed at top
@@ -710,7 +692,7 @@ Interface.prototype.setupContent = function(target) {
     this.components.message = this.components.top.getElementsByTagName('p')[0];
 
     MediathreadCollect.connect(this.components.tab, 'click', this.onclick);
-    MediathreadCollect.connect(this.components.close, 'click', function(evt) {
+    MediathreadCollect.connect(this.components.close, 'click', function() {
         $('.sherd-analyzer').remove();
         this.components.window.style.display = 'none';
         if (MediathreadCollect.options.decorate) {
@@ -772,7 +754,6 @@ Interface.prototype.displayAsset = function(asset, index) {
     }
     var doc = this.components.ul.ownerDocument;
     var li = doc.createElement('li');
-    var jump_url = MediathreadCollect.obj2url(this.host_url, asset);
     var form = MediathreadCollect.obj2form(
         this.host_url, asset, doc, this.options.postTarget, index);
     li.id = asset.html_id;
@@ -830,7 +811,7 @@ Interface.prototype.displayAsset = function(asset, index) {
         if (this.components.ul.firstChild !== null &&
             this.components.ul.firstChild.innerHTML ===
             this.options.message_no_assets
-           ) {
+        ) {
             $(this.components.ul.firstChild).remove();
         }
         this.components.ul.appendChild(li);
@@ -910,9 +891,6 @@ Interface.prototype.saveAll = function() {
         $(window).bind('message', function(jevt) {
             //eh, let's not use this after all
             var evt = jevt.originalEvent;
-            if (host_url.indexOf(evt.origin) === -1) {
-                return;
-            }
             var parsed = evt.data.split('|');
             updateForm(form_dict[ parsed[1] ], parsed[0]);
         });
@@ -943,7 +921,7 @@ Interface.prototype.saveAll = function() {
         //special since it was set by DOM (or changed) above
         new_frm.elements.title.value = this.elements.title.value;
 
-        $(iframe).load(function(evt) {
+        $(iframe).load(function() {
             ++done;
             $(this.components.saveAllButton).text(
                 'Saved ' + done + ' of ' + todo + '...');
