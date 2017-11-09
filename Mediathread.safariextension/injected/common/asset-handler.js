@@ -1,3 +1,6 @@
+/* eslint-env jquery, node */
+/* global MediathreadCollect */
+
 var assetHandler = (function() {
     var clean = function(str) {
         return str.replace(/^\s+/, '').replace(/\s+$/, '').replace(/\s+/, ' ');
@@ -7,7 +10,7 @@ var assetHandler = (function() {
         return jq(tag + '[' + attr + '=' + val + ']', par);
     };
 
-    var flowclipMetaSearch = function(doc) {
+    var flowclipMetaSearch = function() {
         var metaData = {};
         var metaDataElms = $('*[itemprop]', document);
         if (typeof metaDataElms !== 'undefined') {
@@ -20,7 +23,7 @@ var assetHandler = (function() {
                         'undefined') {
                         metaData['metadata-' + itemProp] = {};
                     }
-                    metaListItem = $('#' + metaId).text();
+                    var metaListItem = $('#' + metaId).text();
                     metaData['metadata-' + itemProp][metaId] = metaListItem;
                 }
                 if (itemProp === 'title') {
@@ -179,10 +182,11 @@ var assetHandler = (function() {
                 match: function(emb) {
                     ///ONLY <EMBED>
                     return String(emb.src).match(
-                            /^https:\/\/www.youtube.com\/v\/([\w\-]*)/);
+                        /^https:\/\/www.youtube.com\/v\/([\w-]*)/);
                 },
-                asset: function(emb, match, context,
-                                index, optionalCallback) {
+                asset: function(
+                    emb, match, context, index, optionalCallback
+                ) {
                     var apikey = MediathreadCollect.options.youtube_apikey;
 
                     var VIDEO_ID;
@@ -205,11 +209,11 @@ var assetHandler = (function() {
                     if (emb.getCurrentTime) {
                         if (emb.getCurrentTime() > 0 &&
                             emb.getCurrentTime() < emb.getDuration()
-                           ) {
+                        ) {
                             rv.hash = 'start=' + emb.getCurrentTime();
                         }
                     }
-                    var ytCallback = function(ytData, b, c) {
+                    var ytCallback = function(ytData) {
                         if (
                             $.type(ytData.items) === 'array' &&
                                 ytData.items.length > 0
@@ -265,7 +269,7 @@ var assetHandler = (function() {
                 },
                 asset: function(obj, match, context) {
                     var item;
-                    pl = obj.getPlaylist();
+                    var pl = obj.getPlaylist();
                     switch (pl.length) {
                         case 0:
                             return {};
@@ -334,14 +338,14 @@ var assetHandler = (function() {
                 match: function(obj) {
                     if (obj.data) {
                         return String(obj.data)
-                            .match(/flowplayer[\.\-\w]+3[.\d]+\.swf/);
+                            .match(/flowplayer[.\-\w]+3[.\d]+\.swf/);
                     } else {//IE7 ?+
                         var movie = findByAttr(
                             $, 'param', 'name', 'movie', obj);
                         return (
                             (movie.length) ?
                                 String(movie.get(0).value)
-                                .match(/flowplayer-3[\.\d]+\.swf/) :
+                                    .match(/flowplayer-3[.\d]+\.swf/) :
                                 null);
                     }
                 },
@@ -353,8 +357,8 @@ var assetHandler = (function() {
 
                     //config=
                     var cfg = (($f) ? $f.getConfig() :
-                               $.parseJSON($('param[name=flashvars]')
-                                           .get(0).value.substr(7)));
+                        $.parseJSON($('param[name=flashvars]')
+                            .get(0).value.substr(7)));
 
                     //getClip() works if someone's already clicked Play
                     var clip = ($f && $f.getClip()) || cfg.clip ||
@@ -369,13 +373,13 @@ var assetHandler = (function() {
                         ($f && $f.id() || undefined));
                 },
                 queryasset: function(context, obj, cfg,
-                                     clip, time, refId) {
+                    clip, time, refId) {
                     var sources = {};
                     var type = 'video';
                     var abs = MediathreadCollect.absoluteUrl;
                     if (cfg.playlist &&
                         (!clip.url || cfg.playlist.length > 1)
-                       ) {
+                    ) {
                         for (var i = 0; i < cfg.playlist.length; i++) {
                             var p = cfg.playlist[i];
                             var url =  abs(
@@ -401,7 +405,7 @@ var assetHandler = (function() {
                     }
                     var provider = (clip.provider &&
                                     cfg.plugins[clip.provider]) || false;
-                    function getProvider(c) {
+                    function getProvider() {
                         if (provider) {
                             var plugin = provider.url;
                             if (/pseudostreaming/.test(plugin)) {
@@ -446,14 +450,14 @@ var assetHandler = (function() {
                     if (!sources.thumb) {
                         var paramConfig =
                             $('*[name=flashvars]')[0].value
-                            .split('config=')[1];
+                                .split('config=')[1];
                         paramConfig = JSON.parse(paramConfig);
                         var paramObj = paramConfig;
                         var paramThumb;
                         if (paramObj &&
                             paramObj.canvas &&
                             paramObj.canvas.background
-                           ) {
+                        ) {
                             var bg = paramObj.canvas.background;
                             var bgsplit = bg.split('url(');
                             if (bgsplit.length > 1) {
@@ -515,17 +519,16 @@ var assetHandler = (function() {
                          'clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' &&
                          movie.val().search('kaltura') > -1) ||
                             (String(objemb.type)
-                             .search('x-shockwave-flash') > -1 &&
+                                .search('x-shockwave-flash') > -1 &&
                              ((objemb.data &&
                                String(objemb.data).search('kaltura') > -1
-                              ) ||
+                             ) ||
                               (objemb.src &&
                                String(objemb.src).search('kaltura') > -1) ||
                               (objemb.resource && String(objemb.resource)
-                               .search('kaltura') > -1)))) || null;
+                                  .search('kaltura') > -1)))) || null;
                 },
-                asset: function(objemb, matchRv, context,
-                                index, optionalCallback) {
+                asset: function(objemb) {
                     var stream = objemb.data || objemb.src;
                     if (!stream) {
                         var movie = $(objemb).children(
@@ -608,14 +611,14 @@ var assetHandler = (function() {
                          'clsid:D27CDB6E-AE6D-11cf-96B8-444553540000' &&
                          movie.val().search('moogaloop') > -1) ||
                             (String(objemb.type)
-                             .search('x-shockwave-flash') > -1 &&
+                                .search('x-shockwave-flash') > -1 &&
                              ((objemb.data && String(objemb.data)
-                               .search('moogaloop.swf')) > -1 ||
+                                 .search('moogaloop.swf')) > -1 ||
                               (objemb.src && String(objemb.src)
-                               .search('moogaloop.swf') > -1)))) || null;
+                                  .search('moogaloop.swf') > -1)))) || null;
                 },
                 asset: function(objemb, matchRv, context,
-                                index, optionalCallback) {
+                    index, optionalCallback) {
                     var vimeoId;
                     if (matchRv) {
                         vimeoId = matchRv;
@@ -685,12 +688,12 @@ var assetHandler = (function() {
             'zoomify': {
                 match: function(objemb) {
                     return (String(objemb.innerHTML)
-                            .match(/zoomifyImagePath=([^&\"\']*)/) ||
+                        .match(/zoomifyImagePath=([^&"']*)/) ||
                             String(objemb.flashvars)
-                            .match(/zoomifyImagePath=([^&\"\']*)/));
+                                .match(/zoomifyImagePath=([^&"']*)/));
                 },
                 asset: function(objemb, match, context,
-                                index, optionalCallback) {
+                    index, optionalCallback) {
                     var tileRoot = MediathreadCollect.absoluteUrl(
                         match[1], context.document);
                     //chomp trailing /
@@ -713,7 +716,7 @@ var assetHandler = (function() {
                         },
                         wait: true
                     };
-                    var hardWay = function(error) {
+                    var hardWay = function() {
                         //security error?
                         //Let's try it the hard way!
                         var dim = {
@@ -766,7 +769,6 @@ var assetHandler = (function() {
                                             return optionalCallback(
                                                 index, rvZoomify);
                                         }
-                                        break;
                                     case 'tilegrp': --dim.tilegrp;
                                         var m = dim.mode;
                                         dim.mode = 'tilegrp';
@@ -784,7 +786,7 @@ var assetHandler = (function() {
                             url: tileRoot + '/ImageProperties.xml',
                             dataType: 'text',
                             success: function(dir) {
-                                var re = /WIDTH=\"(\d+)\"\s+HEIGHT=\"(\d+)\"/;
+                                var re = /WIDTH="(\d+)"\s+HEIGHT="(\d+)"/;
                                 var sizes = dir.match(re);
                                 rvZoomify.sources['xyztile-metadata'] =
                                     'w' + (sizes[1]) +
@@ -844,7 +846,7 @@ var assetHandler = (function() {
 
     handler.video = {
         addSource: function(source, rv, video) {
-            var codecs = /[.\/](ogv|ogg|webm|mp4)/i;
+            var codecs = /[./](ogv|ogg|webm|mp4)/i;
             if (!source.src) {
                 return;
             }
@@ -896,7 +898,7 @@ var assetHandler = (function() {
     };
 
     handler.audio = {
-        find: function(callback, context) {
+        find: function(callback) {
             // test if we are on the asset itself, relying on
             // the browser (support) handling the mp3 file
             if (/.mp3$/.test(document.location)) {
@@ -944,7 +946,6 @@ var assetHandler = (function() {
                 return callback([]);
             }
             var frms = context.document.getElementsByTagName('iframe');
-            var result = [];
             MediathreadCollect.connect(
                 context.window,
                 'message',
@@ -954,20 +955,20 @@ var assetHandler = (function() {
                         var d = $.parseJSON(evt.data);
                         if ((id = String(d.id).match(/^sherd(\d+)/)) &&
                             d.info
-                           ) {
+                        ) {
                             var i = d.info;
                             switch (i.player) {
                                 case 'flowplayer':
                                     var fp =
                                         (MediathreadCollect.assethandler
-                                         .objects_and_embeds.players
-                                         .flowplayer3.queryasset(
-                                             context,
-                                             frms[parseInt(id[1], 10)],
-                                             i.config,
-                                             i.clip,
-                                             i.time,
-                                             i.id));
+                                            .objects_and_embeds.players
+                                            .flowplayer3.queryasset(
+                                                context,
+                                                frms[parseInt(id[1], 10)],
+                                                i.config,
+                                                i.clip,
+                                                i.time,
+                                                i.id));
                                     return callback([fp]);
                                 default:
                                     return callback([]);
@@ -988,20 +989,18 @@ var assetHandler = (function() {
     handler['iframe.youtube'] = {
         find: function(callback, context) {
             var frms = context.document.getElementsByTagName('iframe');
-            var result = [];
             var cb = function(ind, rv) {
                 callback([rv]);
             };
             for (var i = 0; i < frms.length; i++) {
                 var vMatch = String(frms[i].src)
-                    .match(/^https:\/\/www.youtube.com\/embed\/([\w\-]*)/);
+                    .match(/^https:\/\/www.youtube.com\/embed\/([\w-]*)/);
                 if (vMatch && vMatch.length > 1) {
                     MediathreadCollect.assethandler
                         .objects_and_embeds.players
                         .youtube.asset(
                             frms[i],
-                            vMatch,
-                            {
+                            vMatch, {
                                 'window': window,
                                 'document': document
                             },
@@ -1031,12 +1030,12 @@ var assetHandler = (function() {
                     /logo/.test(image.parentNode.id) ||
                     //web.mit.edu/shakespeare/asia/
                     /logo\W/.test(image.src)
-                   ) {
+                ) {
                     continue;
                 }
                 if (image.src.length > 4096 ||
                     image.src.indexOf('data') === 0
-                   ) {
+                ) {
                     continue;
                 }
                 /*recreate the <img> so we get the real width/height */
@@ -1050,7 +1049,7 @@ var assetHandler = (function() {
                 }
                 if (imageInd.width >= 400 ||
                     imageInd.height >= 400
-                   ) {
+                ) {
                     result.push({
                         'html': image,
                         'primary_type': 'image',
@@ -1064,7 +1063,7 @@ var assetHandler = (function() {
                 } else {
                     ////Zoomify Tile Images support
                     var zoomifyMatch = String(image.src).match(
-                            /^(.*)\/TileGroup\d\//);
+                        /^(.*)\/TileGroup\d\//);
                     if (zoomifyMatch) {
                         var tileRoot = MediathreadCollect.absoluteUrl(
                             zoomifyMatch[1],
@@ -1102,7 +1101,7 @@ var assetHandler = (function() {
                                 /* jshint ignore:start */
                                 function(dir) {
                                     var sizes = dir.match(
-                                            /WIDTH=\"(\d+)\"\s+HEIGHT=\"(\d+)\"/
+                                        /WIDTH="(\d+)"\s+HEIGHT="(\d+)"/
                                     );
                                     zoomify.sources['xyztile-metadata'] =
                                         'w' + sizes[1] + 'h' + sizes[2];
@@ -1158,8 +1157,7 @@ var assetHandler = (function() {
     // http://unapi.info/specs/
     handler.unAPI = {
         page_resource: true,
-        find: function(callback, context) {
-            var me = this;
+        find: function(callback) {
             var unapi = $('abbr.unapi-id');
             // must find one, or it's not a page resource, and
             // we won't know what asset to connect to
@@ -1178,7 +1176,7 @@ var assetHandler = (function() {
                     $.ajax({
                         'url': requestUrl,
                         'dataType': 'text',
-                        success: function(pbcoreXml, textStatus, xhr) {
+                        success: function(pbcoreXml) {
                             var rv = {
                                 'page_resource': true,
                                 'html': unapi.get(0),
@@ -1201,7 +1199,7 @@ var assetHandler = (function() {
                                 if (titleType === 'Element' ||
                                     document.title.indexOf(
                                         this.firstChild.data) > -1
-                                   ) {
+                                ) {
                                     rv.sources.title = this.firstChild.data;
                                 } else {
                                     rv.metadata[titleType + ':Title'] = [
@@ -1221,7 +1219,7 @@ var assetHandler = (function() {
                             });
                             $('coverage', pb).each(function() {
                                 var type = $('coverageType',
-                                             this.parentNode).text();
+                                    this.parentNode).text();
                                 rv.metadata['Coverage:' + type] =
                                     [this.firstChild.data];
                             });
@@ -1259,12 +1257,13 @@ var assetHandler = (function() {
                                         'subject': []
                                     }
                                 };
-                                rv.metadata.Description = [$(
-                                    '.blacklight-dc_description_t ' +
-                                        '.value').text()];
-                                rv.metadata.Subject =
-                                    [$('.blacklight-topic_cv .value')
-                                     .text()];
+                                rv.metadata.Description = [
+                                    $('.blacklight-dc_description_t .value')
+                                        .text()
+                                ];
+                                rv.metadata.Subject = [
+                                    $('.blacklight-topic_cv .value').text()
+                                ];
                                 rv.metadata.Copyrights =
                                     [$('.copyright').text()];
                                 rv.metadata.Publisher =
@@ -1287,8 +1286,7 @@ var assetHandler = (function() {
     // http://www.oembed.com/
     handler['oEmbed.json'] = {
         page_resource: true,
-        find: function(callback, context) {
-            var me = this;
+        find: function(callback) {
             var oembedLink = false;
             $('link').each(function() {
                 //jQuery 1.0 compatible
@@ -1306,7 +1304,7 @@ var assetHandler = (function() {
                 $.ajax({
                     'url': result.html.href,
                     'dataType': 'json',
-                    success: function(json, textStatus) {
+                    success: function(json) {
                         if (json.ref_id) {
                             result.ref_id = json.ref_id;
                         }
@@ -1359,7 +1357,7 @@ var assetHandler = (function() {
                         }
                         callback([result]);
                     },
-                    error: function(e) {callback([]);}
+                    error: function() {callback([]);}
                 });
             } else {
                 callback([]);
