@@ -14,3 +14,5 @@ Safari extension for importing assets to Mediathread
 * Download URL: Link to `Mediathread.safariextz` in the github release
 * Category: Photos / Other
 * Feature: Toolbar Button
+* Icon: Attach the `assets/mt_logo_256.png` file from this repository.
+* Screenshot: Attach the `assets/screenshot.png` file from this repository.
