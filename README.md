@@ -12,6 +12,7 @@ If you're unfamiliar with Safari Extensions, skim through [Using Extension Build
 * Update ChangeLog
 * Increment version number in Safari's extension builder
 * Make `Mediathread.safariextz` in the Safari extension builder. This is done with the "Build Package..." button.
+* Make a new release on GitHub and attach the `Mediathread.safariextz` file.
 * Go to the Safari extension submission page here:
   https://developer.apple.com/safari/extensions/submission/
   You'll need to fill out this form with each release:
