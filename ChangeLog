@@ -1,3 +1,8 @@
+2018-11-27  Nik Nyby  <nnyby@columbia.edu>
+
+	* Update jQuery to 3.3.1
+	* Update URI.js
+
 2017-11-06  Susan Dreher  <sdreher@columbia.edu>
 
 	* Fix ARTStor image collection.
