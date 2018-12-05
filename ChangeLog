@@ -1,3 +1,7 @@
+2018-12-05  Nik Nyby  <nnyby@columbia.edu>
+
+	* Fix jQuery syntax error in ARTStor collector.
+
 2018-11-27  Nik Nyby  <nnyby@columbia.edu>
 
 	* Update jQuery to 3.3.1
