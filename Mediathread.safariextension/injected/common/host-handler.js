@@ -118,7 +118,7 @@ var hostHandler = {
             var foundImages = [];
 
             // asset detail page
-            var $elt = $('meta[name="asset.id"').first();
+            var $elt = $('meta[name="asset.id"]').first();
             var content = $elt.attr('content');
 
             // selected list page. check this first, as the asset.id
