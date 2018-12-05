@@ -53,7 +53,7 @@ window.MediathreadCollect = {
                     .split('#')[0].split('/').pop() : '');
         }
         if (!/\/save\/$/.test(host_url)) {
-            host_url += '/save/';
+            host_url = new URL('/save/', host_url).href;
         }
         var destination = host_url;
         if (obj.hash) {
@@ -173,7 +173,7 @@ window.MediathreadCollect = {
     'runners': {
         jump: function(host_url) {
             if (!/\/save\/$/.test(host_url)) {
-                host_url += '/save/';
+                host_url = new URL('/save/', host_url).href;
             }
             var M = MediathreadCollect;
             var handler = M.gethosthandler();
@@ -215,7 +215,7 @@ window.MediathreadCollect = {
         },
         decorate: function(host_url) {
             if (!/\/save\/$/.test(host_url)) {
-                host_url += '/save/';
+                host_url = new URL('/save/', host_url).href;
             }
             var M = MediathreadCollect;
             function go(run_func) {
@@ -515,7 +515,7 @@ window.MediathreadCollect = {
 
 var Interface = function(host_url, options) {
     if (!/\/save\/$/.test(host_url)) {
-        host_url += '/save/';
+        host_url = new URL('/save/', host_url).href;
     }
 
     this.host_url = host_url;
@@ -654,7 +654,7 @@ Interface.prototype.setupContent = function(target) {
 
     var hostUrl = this.host_url;
     hostUrl = hostUrl.replace(/\/save\/$/, '');
-    var collectionUrl = hostUrl + '/asset/';
+    var collectionUrl = new URL('/asset/', hostUrl).href;
 
     this.components.top.appendChild(
         this.elt(doc, 'div', 'sherd-tab', '', [this.options.tab_label]));
