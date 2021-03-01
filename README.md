@@ -1,6 +1,6 @@
 # mediathread-safari
 
-[![Build Status](https://travis-ci.org/ccnmtl/mediathread-safari.svg?branch=master)](https://travis-ci.org/ccnmtl/mediathread-safari)
+[![Actions Status](https://github.com/ccnmtl/mediathread-safari/workflows/build-and-test/badge.svg)](https://github.com/ccnmtl/mediathread-safari/actions)
 
 Safari extension for importing assets to Mediathread.
 
